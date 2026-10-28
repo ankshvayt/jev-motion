@@ -135,7 +135,7 @@ def write_outputs(out_dir, rows, decisions, meta):
     head = [backend, model, f"{len(rows)} frames", f"{len(flagged)} flagged"]
     if errors:
         head.append(f"{meta['errored_frames']} errored ({', '.join(sorted(errors))})")
-    head += [f"{live_tokens} input tokens", f"${meta['usd']:.4f}"]
+    head += [f"{live_tokens} input tokens", tokens.fmt_usd(meta["usd"])]
     if meta["cached_frames"]:
         head.append(f"{meta['cached_frames']} cached")
     lines = [f"# Frame QA: {Path(meta.get('render') or out.name).name}", "", " · ".join(head), ""]

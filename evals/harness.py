@@ -31,7 +31,7 @@ from collections import Counter
 from pathlib import Path
 
 from core.policy import budget_k, load_policy
-from jevlib import fake
+from jevlib import fake, tokens
 from jevlib.backends.base import BackendError
 from jevlib.cache import Cache
 from jevlib.client import Client, make_client
@@ -822,7 +822,7 @@ def run_eval(*, qset=None, module=None, backend=None, model=None, dry_run=False,
         head += [f"{len(reqs)} requests replayed; no tokens or dollars are counted", ""]
     else:
         head += [f"{len(reqs)} requests, {used['requests']} live, {used['cache_hits']} cached"
-                 + (f", {used['input_tokens']} input tokens, ${used['usd']:.4f}" if name == "jev"
+                 + (f", {used['input_tokens']} input tokens, {tokens.fmt_usd(used['usd'])}" if name == "jev"
                     else f", {used['serial_s']} s serial"), ""]
     summary = _summary(results, name)
     if not failed:

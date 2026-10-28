@@ -13,6 +13,7 @@ from pathlib import Path
 
 from core.policy import load_policy
 from jevlib.cache import file_sha256
+from jevlib import tokens
 from jevlib.paths import TOOL_ROOT, work_dir
 from kits.kit import manifest_path as kit_manifest_path, resolve_manifest
 from spec.validate import validate
@@ -298,7 +299,7 @@ def cli_build(project, format_id, words, assets, kit_dir, out):
           f"at {canvas['fps']} fps, {canvas['duration_s']} s")
     print(f"transcript: {len(spec['transcript']['words'])} words, {len(units['sentences'])} sentences, "
           f"{len(units['caption_groups'])} caption groups")
-    print(f"highlight density {highlight['density']} ({highlight['from']}); budget ${spec['decide']['budget_usd']:.2f}; "
+    print(f"highlight density {highlight['density']} ({highlight['from']}); budget {tokens.fmt_usd(spec['decide']['budget_usd'])}; "
           f"{len(spec['assets'])} assets")
     if kept:
         print(f"kept creator_declared from the existing {out.name}")

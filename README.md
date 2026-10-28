@@ -55,10 +55,10 @@ You already build HyperFrames videos in a project with Claude Code or Codex, and
 
    If you can't change `PATH`, write `python3 ~/tools/jev-motion/jevm.py` wherever this section says `jevm`.
 
-2. **Add your key.** Put `JEV_API` in the environment, or in a `.env` file in the directory you run `jevm` from (the current working directory only; parent folders are not searched). Run `jevm` from your project root and keep the file out of git:
+2. **Add your key.** Put `JEV_API` in the environment, or in a `.env` file in the directory you run `jevm` from (the current working directory only; parent folders are not searched). Run `jevm` from your project root and keep the key and jevm's output out of git (`work/` holds decisions, caches, crops and QA frames). If the project is not a git repo, skip this:
 
    ```bash
-   echo ".env" >> .gitignore
+   printf '.env\nwork/\n' >> .gitignore
    ```
 
    Without a key everything still runs, and the rows a model would have answered go to the `agent` lane.
@@ -81,13 +81,13 @@ You already build HyperFrames videos in a project with Claude Code or Codex, and
 
    Instead of passing `--kit-dir` every time, you can `export JEVM_KIT_DIR=jevm-kit`. Details: [docs/kits.md](docs/kits.md).
 
-4. **Give it words.** Run HyperFrames' transcriber from the project root:
+4. **Give it words.** Run HyperFrames' transcriber from the project root, with `-d .` so the result lands in the root:
 
    ```bash
-   npx hyperframes transcribe <audio-or-video>
+   npx hyperframes transcribe assets/voiceover.wav -d .
    ```
 
-   It writes `transcript.json` there (add `-d DIR` to write it elsewhere). Pass that file to `spec build --words` as it is: it is a word-level list and `id` is ignored. Do not redirect the command's output into the file; `--json` only prints a status line, not the words. For transcripts from other tools, `--words` takes a JSON list of words, or an object with a `words` list. Each word needs `text` (or `word`) plus numeric `start` and `end` in seconds; `speaker` and `conf` are kept if present, anything else is dropped.
+   Without `-d`, `transcript.json` is written next to the input file (here `assets/transcript.json`), not in the current directory; `-d DIR` sets where it goes. Pass that file to `spec build --words` as it is: it is a word-level list and `id` is ignored. Do not redirect the command's output into the file; `--json` only prints a status line, not the words. For transcripts from other tools, `--words` takes a JSON list of words, or an object with a `words` list. Each word needs `text` (or `word`) plus numeric `start` and `end` in seconds; `speaker` and `conf` are kept if present, anything else is dropped.
 
    ```json
    [
@@ -96,31 +96,65 @@ You already build HyperFrames videos in a project with Claude Code or Codex, and
    ]
    ```
 
-5. **Tell the agent.** Paste this into `CLAUDE.md` (Claude Code) or `AGENTS.md` (Codex), after the step 1 setup:
+5. **List your assets.** Without an asset list the spec has 0 assets and `crop` has nothing to point at. Write `assets.json` in the project root (`examples/project/assets.json` is a model): a JSON list of assets, or an object with an `assets` list.
+
+   ```json
+   [
+     {
+       "id": "billing",
+       "kind": "screenshot",
+       "uri": "assets/billing-screenshot.png",
+       "description": "Screenshot of the billing page",
+       "sensitivity": "public",
+       "layer": "third_party_ui"
+     },
+     {
+       "id": "demo",
+       "kind": "screen_recording",
+       "uri": "assets/demo.mp4",
+       "description": "Screen recording of the export flow",
+       "sensitivity": "private",
+       "layer": "footage"
+     }
+   ]
+   ```
+
+   - `id` (required): lowercase letters, digits, `_` or `-`, starting with a letter. This is what `crop --asset` takes.
+   - `kind` (required): `video`, `screen_recording`, `screenshot`, `image`, `logo`, `audio` or `source_text`. `source_text` files (`.md`, `.txt`, `.html`) are where the stat check looks for a claim's quote.
+   - `uri` (required): a path relative to the project root (the `--project` folder), or an absolute path. `crop` needs a local image or video file.
+   - `description`: optional, but say what the asset shows; `spec build` notes when it is missing.
+   - `sensitivity`: `public`, `own_render` or `private`. When missing, `spec build` sets it to `private`. `qa` gives every frame the strictest value of any asset.
+   - `layer`: optional, one of `overlay`, `footage` or `third_party_ui`. It is checked against the schema and not used by the commands.
+
+   Pass the file with `--assets assets.json` to `spec build` (step 6 shows the full line). The assets are copied into `spec.json`, so after you change `assets.json`, rebuild the spec.
+
+6. **Tell the agent.** Edit the block below for each project before pasting it: the kit path, the words path, `--format` (`short` is vertical 9:16, `long` is horizontal 16:9) and the assets file. Paste it into `CLAUDE.md` (Claude Code) or `AGENTS.md` (Codex), after the step 1 setup:
 
    ```markdown
    ## jevm (bounded video-build decisions)
    `jevm` is on PATH. Run it from the project root so .env is found.
-   Kit: ./jevm-kit. Words: ./transcript.json (written by `npx hyperframes transcribe <audio-or-video>` in the project root). Format: `short` or `long`.
+   Kit: ./jevm-kit. Words: ./transcript.json (written by `npx hyperframes transcribe <audio-or-video> -d .` from the project root; without `-d` it lands next to the input file). Assets: ./assets.json. Format: `short` or `long`.
 
    Loop, for each video:
    1. `jevm kit check --kit-dir jevm-kit`
-   2. `jevm spec build --project . --format short --words transcript.json --kit-dir jevm-kit`, then `jevm spec validate work/jevm/spec.json --kit-dir jevm-kit`
+   2. `jevm spec build --project . --format short --words transcript.json --assets assets.json --kit-dir jevm-kit`, then `jevm spec validate work/jevm/spec.json --kit-dir jevm-kit`. Rebuild the spec after changing assets.json, the words or the kit manifest.
    3. `jevm plan work/jevm/spec.json --dry-run` to see the cost, then `jevm plan work/jevm/spec.json`
    4. Read `work/jevm/decisions.md`. Resolve `agent` lane rows yourself: `jevm resolve work/jevm/decisions.json ID --accept --by agent` (or `--value V`).
-   5. Send me every `human` lane row in ONE message and wait for my answer. Then `jevm resolve ... --by human`.
-   6. For each window focus shot: `jevm crop work/jevm/spec.json --beat B --asset A --want "what to focus on"` (add `--t SECONDS` for a video asset). Look at the overlay it writes, not the source.
+   5. Send me every `human` lane row in ONE message and wait for my answer. Then `jevm resolve ... --by human`. The stat check (STY-06) also flags sentences with number words like "one click"; if I say a flagged sentence is not a stat, resolve it with `jevm resolve work/jevm/decisions.json STY-06:ID --value '{"class":"opinion"}' --by human`.
+   6. For each window focus shot: `jevm crop work/jevm/spec.json --beat B --asset A --want "what to focus on"` (add `--t SECONDS` for a video asset). `B` is any short name you choose (e.g. `b1`, `sort-button`); it becomes the row `AST-01:B` and the overlay `work/jevm/crops/B.jpg`. `A` is an `id` from assets.json. `--want` must describe ONE region: for two unrelated targets (a button top-right and a column mid-page) run two crops with two beat names. Look at the overlay it writes, not the source.
    7. Build the composition from the resolved rows, then render.
    8. `jevm qa RENDER.mp4 --spec work/jevm/spec.json`, then look at `work/jevm/qa/<render-stem>/flagged.jpg` (written when frames are flagged).
 
    Rules:
    - jevm never edits the composition. You do.
    - qa is triage, not a ship gate. Keep `npx hyperframes lint`, `npm run check` and the render as they are.
-   - Use `--budget USD` to cap spend (exit 3 means over budget). Use `--no-jev` to send nothing to TypeSafe, `--no-images` to send no images.
+   - Each run is capped by the budget in `work/jevm/spec.json` (`decide.budget_usd`; `spec build` sets it to $0.10 for `short` and $1.00 for `long`). `--budget USD` overrides it for one run; exit 3 means over budget. Use `--no-jev` to send nothing to TypeSafe, `--no-images` to send no images.
    - Never print or commit `.env` or the key.
    ```
 
-6. **Optional: a Claude Code skill.** The same block can live in `.claude/skills/jevm/SKILL.md`, with this frontmatter above it, so Claude Code loads it when the task calls for it:
+   Spend, in short: the budget is per run (each `plan`, `crop` or `qa` compares its own estimate against it, not a running total). To change the default for a project, edit `decide.budget_usd` in `work/jevm/spec.json`, or pass `--budget USD`; `spec build` writes the default again on every rebuild, so an edit in `spec.json` does not survive a rebuild.
+
+7. **Optional: a Claude Code skill.** The same block can live in `.claude/skills/jevm/SKILL.md`, with this frontmatter above it, so Claude Code loads it when the task calls for it:
 
    ```markdown
    ---
@@ -173,7 +207,7 @@ The usual loop: `kit check`, `spec build`, `plan`, read `decisions.md`, `resolve
 | `python3 jevm.py resolve decisions.json ID[,ID...] (--accept \| --value V) --by agent\|human [--note "..."]` | Marks rows accepted, or overridden with `V` (JSON when it parses). Works on `qa.json` too. Exit 2 on an unknown id. |
 | `python3 jevm.py eval [--module M] [--qset Q] [--backend jev\|local] [--model M] [--offline] [--out DIR] [spend flags]` | Scores the question sets against the frozen eval sets in `evalsets/` and writes `<DIR>/<date>-<HHMMSS>-<backend>-<scope>.{md,json}` (default `eval/`). `--offline` replays scripted answers through fake backends. Run once per backend and the second report carries a parity table. Exit 0 all gates pass; 1 a gate failed or could not be measured; 2 bad input; 3 over budget. |
 
-Spend flags: `--dry-run` prints one estimate line per backend (requests, estimated input tokens, estimated dollars, cache hits) and sends nothing; `--budget USD` (default `spec.decide.budget_usd`) sends nothing and exits 3 when the estimate is over it; `--no-jev` sends nothing to TypeSafe; `--no-images` sends no image to either backend.
+Spend flags: `--dry-run` prints one estimate line per backend (requests, estimated input tokens, estimated dollars, cache hits) and sends nothing; `--budget USD` (default `spec.decide.budget_usd`: $0.10 for `short`, $1.00 for `long`, per run) sends nothing and exits 3 when the estimate is over it; `--no-jev` sends nothing to TypeSafe; `--no-images` sends no image to either backend.
 
 ## Environment
 

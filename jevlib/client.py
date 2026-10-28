@@ -349,14 +349,15 @@ class Client:
         but still says so."""
         est = self.estimate(reqs)
         j, loc, none = est["jev"], est["local"], est["none"]
+        spend = tokens.fmt_usd(j["usd"])
         self.log(f"jev: {j['requests']} requests ({j['cached']} cached), ~{j['input_tokens']} input tokens, "
-                 f"~${j['usd']:.3f}")
+                 f"{'' if spend.startswith('<') else '~'}{spend}")
         self.log(f"local: {loc['requests']} requests ({loc['cached']} cached), ~{loc['serial_s']:.1f} s serial")
         if none["requests"]:
             self.log(f"none: {none['requests']} requests have no backend; their rows go to the agent")
         over = budget_usd is not None and j["usd"] > budget_usd
         if over:
-            self.log(f"over budget: ~${j['usd']:.3f} against a ${budget_usd:.3f} budget; "
+            self.log(f"over budget: {'' if spend.startswith('<') else '~'}{spend} against a {tokens.fmt_usd(budget_usd)} budget; "
                      + ("dry run, nothing sent" if dry_run else "stopping before anything is sent (pass --budget to raise it)"))
         if dry_run:
             if not over:

@@ -424,7 +424,7 @@ class RunManyTests(ClientCase):
 
 
 class PreflightTests(ClientCase):
-    LINE_JEV = r"^jev: \d+ requests \(\d+ cached\), ~\d+ input tokens, ~\$\d+\.\d+$"
+    LINE_JEV = r"^jev: \d+ requests \(\d+ cached\), ~\d+ input tokens, (?:~\$\d+\.\d+|<\$0\.001)$"
     LINE_LOCAL = r"^local: \d+ requests \(\d+ cached\), ~\d+\.\d+ s serial$"
 
     def test_preflight_dry_run_returns_0_and_budget_exceeded_returns_3(self):

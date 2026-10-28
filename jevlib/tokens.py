@@ -31,6 +31,14 @@ def usd(tokens):
     return tokens * JEV_USD_PER_M_INPUT / 1e6
 
 
+def fmt_usd(amount):
+    """A dollar amount for a message: `$0.000` when exactly zero, `<$0.001` when above zero but under a tenth of a
+    cent, else three decimals (`$0.042`)."""
+    if amount > 0 and amount < 0.001:
+        return "<$0.001"
+    return f"${amount:.3f}"
+
+
 def local_seconds(n_questions, n_images):
     """Estimated serial Decider time for one request with `n_questions` questions and `n_images` images."""
     if n_questions <= 0:

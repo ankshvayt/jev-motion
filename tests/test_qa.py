@@ -344,7 +344,7 @@ class OutputTests(unittest.TestCase):
             self.assertAlmostEqual(meta["usd"], 4770 * 0.042 / 1e6, places=6)
             head = (td / "out" / "qa.md").read_text(encoding="utf-8").splitlines()
             line = next(x for x in head if "frames" in x and "tokens" in x)
-            for part in ("jev", "jev-1.14.0", "3 frames", "0 flagged", "1 errored", "4770", "$0.0002"):
+            for part in ("jev", "jev-1.14.0", "3 frames", "0 flagged", "1 errored", "4770", "<$0.001"):
                 self.assertIn(part, line)
 
 

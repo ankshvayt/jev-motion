@@ -18,6 +18,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
 
+from jevlib import tokens
+
 from .policy import decision_policy, load_policy
 
 CONTRACT_VERSION = "1"
@@ -236,7 +238,7 @@ def _backend_lines(doc: dict) -> list[str]:
         local_model += f" (Decider {local['app_version']})"
     return [
         f"- jev: {jev_models}; {_plural(jev.get('requests', 0), 'request')}; {jev.get('input_tokens', 0):,} input tokens; "
-        f"${jev.get('usd', 0):.4f}; {_plural(jev.get('cache_hits', 0), 'cache hit')}",
+        f"{tokens.fmt_usd(jev.get('usd', 0))}; {_plural(jev.get('cache_hits', 0), 'cache hit')}",
         f"- local: {local_model}; {_plural(local.get('requests', 0), 'request')}; "
         f"{local.get('serial_s', 0):.1f} s serial; {_plural(local.get('cache_hits', 0), 'cache hit')}",
     ]

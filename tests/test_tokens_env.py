@@ -28,6 +28,16 @@ class TokenTests(unittest.TestCase):
     def test_usd(self):
         self.assertAlmostEqual(tokens.usd(1_000_000), 0.042, places=9)
         self.assertEqual(tokens.usd(0), 0.0)
+
+    def test_fmt_usd(self):
+        self.assertEqual(tokens.fmt_usd(0), "$0.000")
+        self.assertEqual(tokens.fmt_usd(0.0), "$0.000")
+        self.assertEqual(tokens.fmt_usd(1e-9), "<$0.001")
+        self.assertEqual(tokens.fmt_usd(0.000999), "<$0.001")
+        self.assertEqual(tokens.fmt_usd(0.001), "$0.001")
+        self.assertEqual(tokens.fmt_usd(0.1), "$0.100")
+        self.assertEqual(tokens.fmt_usd(0.0424), "$0.042")
+        self.assertEqual(tokens.fmt_usd(12), "$12.000")
         self.assertEqual(tokens.JEV_USD_PER_M_INPUT, 0.042)
 
     def test_constants(self):
