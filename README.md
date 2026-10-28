@@ -31,6 +31,104 @@ Tests, offline (no network, no key):
 python3 -m unittest discover -s tests -t . -q
 ```
 
+## Use it from Claude Code or Codex
+
+You already build HyperFrames videos in a project with Claude Code or Codex, and want your agent to call `jevm` as a tool. Set it up once per machine, then once per project.
+
+1. **Get it once**, to a fixed place outside your project. There is no install step: it needs Python 3.15 or newer (`jevm.py` exits 2 below it) plus `ffmpeg` and `ffprobe` on your `PATH`.
+
+   ```bash
+   git clone https://github.com/ankshvayt/jev-motion ~/tools/jev-motion
+   ```
+
+   Make `jevm` a command:
+
+   ```bash
+   mkdir -p ~/.local/bin && ln -s ~/tools/jev-motion/jevm.py ~/.local/bin/jevm
+   ```
+
+   `~/.local/bin` must be on your `PATH`. Check:
+
+   ```bash
+   jevm --help
+   ```
+
+   If you can't change `PATH`, write `python3 ~/tools/jev-motion/jevm.py` wherever this section says `jevm`.
+
+2. **Add your key.** Put `JEV_API` in the environment, or in a `.env` file in the directory you run `jevm` from (the current working directory only; parent folders are not searched). Run `jevm` from your project root and keep the file out of git:
+
+   ```bash
+   echo ".env" >> .gitignore
+   ```
+
+   Without a key everything still runs, and the rows a model would have answered go to the `agent` lane.
+
+3. **Add a kit** (your style as jevm sees it). Copy the example into the project, edit it, re-stamp it, check it:
+
+   ```bash
+   cp -r ~/tools/jev-motion/examples/kit jevm-kit
+   ```
+
+   Edit `jevm-kit/manifest.json` to match your project. The fields that matter most: `canvases.short` / `canvases.long` (size, `safe`, `text_min_px`, `window_body`), `captions` (`max_words_per_line`, `max_lines`), `emphasis.words.value` (your highlight colour), `rules.highlight` and `rules.focus_scale`, and `qa_context` (one paragraph describing a frame in your style, sent with every frame-QA question). `kit check` fails with "stale" when a file listed under `sources` (`tokens.css`, `use_when.json`) changed since the last `kit build`, so re-stamp after editing those, then check. After any later manifest change, re-run `spec build`: `plan`, `crop` and `qa` refuse a spec built from an older manifest.
+
+   ```bash
+   jevm kit build --kit-dir jevm-kit
+   ```
+
+   ```bash
+   jevm kit check --kit-dir jevm-kit
+   ```
+
+   Instead of passing `--kit-dir` every time, you can `export JEVM_KIT_DIR=jevm-kit`. Details: [docs/kits.md](docs/kits.md).
+
+4. **Give it words.** Run HyperFrames' transcriber from the project root:
+
+   ```bash
+   npx hyperframes transcribe <audio-or-video>
+   ```
+
+   It writes `transcript.json` there (add `-d DIR` to write it elsewhere). Pass that file to `spec build --words` as it is: it is a word-level list and `id` is ignored. Do not redirect the command's output into the file; `--json` only prints a status line, not the words. For transcripts from other tools, `--words` takes a JSON list of words, or an object with a `words` list. Each word needs `text` (or `word`) plus numeric `start` and `end` in seconds; `speaker` and `conf` are kept if present, anything else is dropped.
+
+   ```json
+   [
+     {"id": "w0", "text": "Most", "start": 0.0, "end": 0.3},
+     {"id": "w1", "text": "teams", "start": 0.35, "end": 0.53}
+   ]
+   ```
+
+5. **Tell the agent.** Paste this into `CLAUDE.md` (Claude Code) or `AGENTS.md` (Codex), after the step 1 setup:
+
+   ```markdown
+   ## jevm (bounded video-build decisions)
+   `jevm` is on PATH. Run it from the project root so .env is found.
+   Kit: ./jevm-kit. Words: ./transcript.json (written by `npx hyperframes transcribe <audio-or-video>` in the project root). Format: `short` or `long`.
+
+   Loop, for each video:
+   1. `jevm kit check --kit-dir jevm-kit`
+   2. `jevm spec build --project . --format short --words transcript.json --kit-dir jevm-kit`, then `jevm spec validate work/jevm/spec.json --kit-dir jevm-kit`
+   3. `jevm plan work/jevm/spec.json --dry-run` to see the cost, then `jevm plan work/jevm/spec.json`
+   4. Read `work/jevm/decisions.md`. Resolve `agent` lane rows yourself: `jevm resolve work/jevm/decisions.json ID --accept --by agent` (or `--value V`).
+   5. Send me every `human` lane row in ONE message and wait for my answer. Then `jevm resolve ... --by human`.
+   6. For each window focus shot: `jevm crop work/jevm/spec.json --beat B --asset A --want "what to focus on"` (add `--t SECONDS` for a video asset). Look at the overlay it writes, not the source.
+   7. Build the composition from the resolved rows, then render.
+   8. `jevm qa RENDER.mp4 --spec work/jevm/spec.json`, then look at `work/jevm/qa/<render-stem>/flagged.jpg` (written when frames are flagged).
+
+   Rules:
+   - jevm never edits the composition. You do.
+   - qa is triage, not a ship gate. Keep `npx hyperframes lint`, `npm run check` and the render as they are.
+   - Use `--budget USD` to cap spend (exit 3 means over budget). Use `--no-jev` to send nothing to TypeSafe, `--no-images` to send no images.
+   - Never print or commit `.env` or the key.
+   ```
+
+6. **Optional: a Claude Code skill.** The same block can live in `.claude/skills/jevm/SKILL.md`, with this frontmatter above it, so Claude Code loads it when the task calls for it:
+
+   ```markdown
+   ---
+   name: jevm
+   description: Use when building a HyperFrames video that needs caption highlights, stat-claim checks, focus crops or frame QA triage from jevm.
+   ---
+   ```
+
 ## Quickstart
 
 Everything below runs from the repo root on the shipped examples. `examples/project/words.json` is a short synthetic transcript; `examples/kit/` is a neutral example kit.
