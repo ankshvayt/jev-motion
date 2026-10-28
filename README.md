@@ -35,6 +35,30 @@ python3 -m unittest discover -s tests -t . -q
 
 ## Use it from Claude Code or Codex
 
+### Quickest way: paste this prompt
+
+Open Claude Code (or Codex) in your HyperFrames project's root folder and paste the prompt below as your message. The agent will ask you a few questions and never reads your key.
+
+```text
+Set up jevm (Jev Motion: bounded decisions for HyperFrames video builds) in the project in your current directory. Do the steps in order. Ask me only what a step says to ask; decide the rest yourself and tell me what you did. Never open, print, grep or copy any .env file.
+
+1. Requirements. Run `python3 --version` (it must be 3.15 or newer) and check that `ffmpeg`, `ffprobe` and `npx` exist. If anything is missing, stop and tell me what to install.
+2. Install or update. If ~/tools/jev-motion is missing, run `git clone https://github.com/ankshvayt/jev-motion ~/tools/jev-motion`; otherwise run `git -C ~/tools/jev-motion pull --ff-only`. Only if ~/.local/bin/jevm is missing, run `mkdir -p ~/.local/bin && ln -s ~/tools/jev-motion/jevm.py ~/.local/bin/jevm`. Then run `jevm --help`. If jevm is not on PATH, use `python3 ~/tools/jev-motion/jevm.py` wherever I write `jevm`, and tell me how to add ~/.local/bin to PATH; the CLAUDE.md block (step 9) must then use that same fallback command, and its "`jevm` is on PATH" line must be changed to match.
+3. Read ~/tools/jev-motion/README.md, section "Use it from Claude Code or Codex". It is the source of truth for every command; where it differs from this prompt, follow the README.
+4. Key. Live answers need my Jev key. I will add one line, JEV_API=..., to .env in the project root myself; if .env already exists, tell me to make sure it has a JEV_API= line instead of adding a second one. Without a key jevm still runs and you decide every row. Do not wait for the key; carry on.
+5. Git. If the project is a git repo, add .env and work/ to .gitignore when they are missing.
+6. Kit. If jevm-kit/ is missing, copy ~/tools/jev-motion/examples/kit to jevm-kit/. Ask me, in ONE message: is the video vertical (short) or horizontal (long); what is my highlight colour; and one sentence describing my visual style (this becomes qa_context). Edit the kit from my answers: set the highlight colour in manifest.json and in tokens.css (--accent) and in every colour mention in the qa_context text, and put my style sentence into qa_context in both manifest.json and use_when.json. Then run `jevm kit build --kit-dir jevm-kit` and `jevm kit check --kit-dir jevm-kit`.
+7. Words. Find the voiceover or source video (ignore the project's own renders, e.g. renders/); ask me which only if more than one real source remains. Run `npx hyperframes transcribe <file> -d .`, which writes transcript.json in the project root. Skip this if transcript.json already exists and I confirm it is current.
+8. Assets. List the source screenshots and screen recordings in the project (not the project's own renders) and ask me which to include. Write assets.json in the format the README describes, with a real description of each file, and leave sensitivity at its default unless I say otherwise.
+9. Agent instructions. Add the README's agent block ("## jevm (bounded video-build decisions)") to CLAUDE.md without the README's list indentation (so it renders as normal Markdown, not a code block), filling only the setup placeholders: <KIT_DIR>, <WORDS>, <ASSETS>, <short|long> and <AUDIO> (the file you actually transcribed). Leave B, A, ID, V, RENDER.mp4 and <render-stem> as written. Create the file if it is missing; if it exists, append the block under its own heading and never overwrite or reorder what is there. If an AGENTS.md exists, add the same block there too. If a jevm block is already present, update it instead of adding a second one.
+10. First run. Run `jevm spec build --project . --format <short or long, as I answered in step 6> --words transcript.json --assets assets.json --kit-dir jevm-kit`, then `jevm spec validate work/jevm/spec.json --kit-dir jevm-kit`, then `jevm plan work/jevm/spec.json --dry-run`. A "Decider unavailable" line is normal when no local Decider runs. If spec build warns that the title is the folder name, mention it in your report (no flag sets it). Show me the cost line and STOP. Do not run a real plan until I say go.
+11. Report. End with a short summary: what you created or changed (with file paths), my answers, and what I still need to do (add the key; say go).
+```
+
+Prefer to do it by hand? The steps below are what the prompt does.
+
+### By hand
+
 You already build HyperFrames videos in a project with Claude Code or Codex, and want your agent to call `jevm` as a tool. Set it up once per machine, then once per project.
 
 1. **Get it once**, to a fixed place outside your project. There is no install step: it needs Python 3.15 or newer plus `ffmpeg` and `ffprobe` on your `PATH`. First check the version:
