@@ -1,5 +1,7 @@
 # Jev Motion (`jevm`)
 
+A plain-English overview of what it does lives at <https://ankshvayt.github.io/jev-motion/>.
+
 Bounded decisions for HyperFrames video builds, made by a decision model and written down where a build agent can act on them.
 
 `jevm` asks small, typed questions of [Jev](https://typesafe.ai) (TypeSafe's System One model, in the cloud) and/or a local Decider server over HTTP, and writes the answers to `decisions.json` and `decisions.md`:

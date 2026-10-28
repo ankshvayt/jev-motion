@@ -1,0 +1,841 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jev Motion: the small calls in your video edits, made and written down</title>
+<meta name="description" content="Jev Motion lets an AI decision model make the small, repeatable calls in your video edits and write them down, so your AI agent can build the video and you only answer the questions that need a human.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F6F6F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0F1012" media="(prefers-color-scheme: dark)">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23111214'/%3E%3Cpath d='M16 7 25 16 16 25 7 16Z' fill='%238FA2FF'/%3E%3C/svg%3E">
+<style>
+:root{
+  --paper:#F6F6F3; --panel:#ECEDE9; --ink:#111214; --ink-2:#43464B; --ink-3:#64686E;
+  --rule:#D2D3CE; --accent:#2B45D4; --on-accent:#FFFFFF; --wash:rgba(43,69,212,.10);
+  --stage:#16181C; --stage-2:#24272C; --on-stage:#F4F4F1; --on-stage-2:#A2A6AD;
+  --win:#FBFBF9; --win-2:#EEEFEB; --win-ink:#1A1C1F; --win-ink-2:#62666C; --win-line:#E1E2DE;
+  --hl:#3149DC;
+  --sans:"Helvetica Neue",Helvetica,"Nimbus Sans","Liberation Sans",Arial,sans-serif;
+  --mono:ui-monospace,"SF Mono",SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  --pad:clamp(20px,5vw,72px); --max:1320px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#0F1012; --panel:#17191C; --ink:#ECECE8; --ink-2:#B5B7BA; --ink-3:#8E9298;
+    --rule:#2C2F34; --accent:#8FA2FF; --on-accent:#0F1012; --wash:rgba(143,162,255,.13);
+    --stage:#1B1E22; --stage-2:#2A2E34;
+    --win:#E6E7E3; --win-2:#D9DAD5; --win-line:#CACBC6;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 1.0625rem/1.55 var(--sans);-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
+h1,h2,h3,p,ol,ul,figure,dl,dd,pre{margin:0}
+ol,ul{padding:0;list-style:none}
+a{color:inherit;text-decoration-thickness:1px;text-underline-offset:.22em}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:2px}
+code,kbd,.mono{font-family:var(--mono);font-size:.88em}
+p code,li code,dd code{background:var(--panel);padding:.08em .32em;border-radius:3px;white-space:nowrap}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.skip{position:absolute;left:var(--pad);top:-60px;background:var(--ink);color:var(--paper);padding:10px 14px;z-index:10;text-decoration:none;border-radius:3px}
+.skip:focus{top:12px}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--pad)}
+
+/* lane markers: circle = auto, square = agent, diamond = you */
+.mk{width:.72em;height:.72em;flex:none;display:inline-block;vertical-align:-.02em}
+.mk-you{color:var(--accent)}
+
+/* top bar */
+.top{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-top:28px;padding-bottom:28px}
+.brand{display:inline-flex;align-items:center;gap:10px;font-weight:700;font-size:1.0625rem;letter-spacing:-.01em;text-decoration:none}
+.brand svg{width:46px;height:14px}
+.top ul{display:flex;gap:clamp(16px,2.4vw,32px);font-size:.9375rem}
+.top a:not(.brand){text-decoration:none;color:var(--ink-2)}
+.top a:not(.brand):hover{color:var(--accent)}
+@media (max-width:760px){.top li:not(:last-child){display:none}}
+
+/* hero */
+.hero{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;row-gap:56px;padding-top:clamp(28px,6vw,88px);align-items:start}
+.hero-copy{grid-column:1/7;padding-top:8px}
+h1{font-weight:700;font-size:clamp(2.55rem,4.6vw,4.25rem);line-height:.98;letter-spacing:-.035em;text-wrap:balance;max-width:11.5em}
+.lead{margin-top:28px;font-size:clamp(1.125rem,1.5vw,1.3rem);line-height:1.45;color:var(--ink-2);max-width:31em;text-wrap:pretty}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:36px}
+.btn{display:inline-flex;align-items:center;gap:10px;min-height:48px;padding:0 22px;border-radius:3px;font-weight:500;font-size:1rem;text-decoration:none;transition:background-color .2s var(--ease),color .2s var(--ease),border-color .2s var(--ease)}
+.btn svg{width:14px;height:14px;transition:transform .3s var(--ease)}
+.btn-primary{background:var(--accent);color:var(--on-accent)}
+.btn-primary:hover{color:var(--on-accent);background:var(--ink)}
+@media (prefers-color-scheme:dark){.btn-primary:hover{background:var(--ink);color:var(--paper)}}
+.btn-primary:hover svg{transform:translateY(2px)}
+.btn-quiet{border:1.5px solid var(--ink);color:var(--ink)}
+.btn-quiet:hover{border-color:var(--accent);color:var(--accent)}
+.btn-quiet:hover svg{transform:translateX(3px)}
+.meta{margin-top:32px;font-size:.9375rem;color:var(--ink-3);max-width:34em;text-wrap:pretty}
+
+.hero-fig{grid-column:7/13;display:grid;grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);gap:20px;align-items:start}
+.hero-fig figcaption{grid-column:1/-1;font-size:.875rem;color:var(--ink-3);border-top:1px solid var(--rule);padding-top:12px;text-wrap:pretty}
+
+/* phone */
+.phone{container-type:inline-size;aspect-ratio:9/16;background:var(--stage);border-radius:18px;position:relative;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,.04),0 24px 48px -28px rgba(17,18,20,.55);margin-top:28px}
+@media (prefers-color-scheme:dark){.phone{box-shadow:0 0 0 1px var(--rule)}}
+.ph-win{position:absolute;left:7cqw;right:7cqw;top:15cqw;background:var(--win);border-radius:3cqw;overflow:hidden}
+.ph-bar{display:flex;align-items:center;gap:1.6cqw;height:9cqw;padding:0 3.6cqw;background:var(--win-2);border-bottom:1px solid var(--win-line);font:600 4cqw/1 var(--sans);color:var(--win-ink-2)}
+.ph-bar i{width:2.4cqw;height:2.4cqw;border-radius:50%;background:var(--win-line)}
+.ph-bar span{margin-left:2cqw}
+.ph-rows{padding:2.4cqw 3.6cqw 4cqw}
+.ph-row{display:grid;grid-template-columns:1fr .55fr .6fr;gap:2.4cqw;align-items:center;height:9.6cqw;border-bottom:1px solid var(--win-line)}
+.ph-row:last-child{border-bottom:0}
+.ph-row b{height:2.2cqw;border-radius:1cqw;background:#C9CBC6}
+.ph-row b:nth-child(2){width:70%}
+.ph-row em{font:700 3.6cqw/1 var(--sans);font-style:normal;color:var(--win-ink);justify-self:end}
+.ph-row em.paid{font-weight:400;color:var(--win-ink-2)}
+.ph-cap{position:absolute;left:7cqw;right:7cqw;bottom:24cqw;font:700 8.2cqw/1.18 var(--sans);letter-spacing:-.01em;color:var(--on-stage);text-align:center;text-wrap:balance}
+.hl{color:#fff;padding:0 .12em;margin:0 -.04em;border-radius:.08em;background:linear-gradient(var(--hl),var(--hl)) no-repeat 0 0/100% 100%;-webkit-box-decoration-break:clone;box-decoration-break:clone}
+.ph-time{position:absolute;left:7cqw;right:7cqw;bottom:8cqw}
+.ph-track{position:relative;height:5cqw}
+.ph-track::before{content:"";position:absolute;left:0;right:0;top:50%;height:1px;background:var(--on-stage-2);opacity:.6}
+.ph-track::after{content:"";position:absolute;left:0;width:9%;top:50%;height:2px;margin-top:-.5px;background:var(--on-stage)}
+.ph-track svg{position:absolute;top:50%;width:3.6cqw;height:3.6cqw;margin:-1.8cqw 0 0 -1.8cqw;color:var(--on-stage)}
+.ph-track .mk-you{color:#9AACFF}
+.ph-tc{display:flex;justify-content:space-between;margin-top:1.6cqw;font:400 3.4cqw/1 var(--mono);color:var(--on-stage-2)}
+
+/* decisions board */
+.board{border:1.5px solid var(--ink);border-radius:4px;background:var(--paper)}
+.board-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:12px 16px;border-bottom:1.5px solid var(--ink);font-size:.8125rem}
+.board-head .mono{font-size:.8125rem;font-weight:600}
+.board-head span:last-child{color:var(--ink-3)}
+.row{display:grid;grid-template-columns:2.6em minmax(0,1fr);column-gap:10px;row-gap:6px;padding:14px 16px;border-bottom:1px solid var(--rule)}
+.row:last-child{border-bottom:0}
+.row .tc{font:400 .75rem/1.5 var(--mono);color:var(--ink-3);padding-top:.1em}
+.row .q{font-weight:500;font-size:.9375rem;line-height:1.3;text-wrap:pretty}
+.row .a{grid-column:2;font-size:.875rem;line-height:1.35;color:var(--ink-2)}
+.row .lane{grid-column:2;display:inline-flex;align-items:center;gap:7px;font-size:.8125rem;font-weight:500}
+.board-foot{display:flex;align-items:center;gap:9px;padding:12px 16px;border-top:1.5px solid var(--ink);font-size:.875rem;font-weight:500}
+
+/* sections */
+.sec{padding-top:clamp(88px,11vw,160px)}
+.sec-in{border-top:3px solid var(--ink);padding-top:clamp(24px,3vw,36px)}
+.split{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;row-gap:28px}
+.split>.sh{grid-column:1/6}
+.split>.sb{grid-column:6/13}
+h2{font-weight:700;font-size:clamp(1.95rem,3.4vw,3rem);line-height:1.02;letter-spacing:-.03em;text-wrap:balance;max-width:14em}
+h3{font-weight:700;font-size:1.3125rem;line-height:1.2;letter-spacing:-.012em;text-wrap:balance}
+.intro{font-size:clamp(1.0625rem,1.3vw,1.1875rem);line-height:1.5;color:var(--ink-2);max-width:36em;text-wrap:pretty}
+.sb p+p{margin-top:1em}
+.prose{max-width:38em;text-wrap:pretty}
+dfn{font-style:normal;font-weight:600}
+
+/* problem */
+.asks{margin-top:4px}
+.asks li{font-size:clamp(1.25rem,2.1vw,1.75rem);line-height:1.22;letter-spacing:-.015em;font-weight:500;padding:16px 0;border-bottom:1px solid var(--rule);text-wrap:balance}
+.asks li:first-child{padding-top:0}
+.ways{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:40px}
+.ways h3{font-size:1.0625rem;margin-bottom:8px}
+.ways p{color:var(--ink-2);font-size:1rem}
+.turn{margin-top:40px;font-size:clamp(1.125rem,1.5vw,1.3rem);line-height:1.45;max-width:32em;text-wrap:pretty}
+
+/* four decisions */
+.decs{display:grid;grid-template-columns:1fr 1fr;column-gap:clamp(24px,4vw,64px);row-gap:clamp(56px,6vw,88px);margin-top:clamp(40px,5vw,64px)}
+.dec h3{margin-top:22px}
+.dec p{margin-top:10px;color:var(--ink-2);max-width:34em;text-wrap:pretty}
+.dec .who{max-width:none}
+.who{display:flex;align-items:flex-start;gap:8px;margin-top:16px;padding-top:12px;border-top:1px solid var(--rule);font-size:.875rem;color:var(--ink-3)}
+.who b{color:var(--ink);font-weight:600}
+.who .mk{margin-top:.38em}
+
+.mock{container-type:inline-size;position:relative;aspect-ratio:16/10;background:var(--panel);border-radius:4px;overflow:hidden}
+@media (prefers-color-scheme:dark){.mock{box-shadow:inset 0 0 0 1px var(--rule)}}
+.mock-dark{background:var(--stage)}
+
+/* mock 1: captions */
+.m-caps{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;gap:7cqw;padding:0 9cqw}
+.m-caps .cg{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:4cqw}
+.m-caps p{font:700 4.6cqw/1.2 var(--sans);color:var(--on-stage);letter-spacing:-.01em}
+.m-caps .note{font:400 2.5cqw/1.3 var(--mono);color:var(--on-stage-2);border-left:1px solid var(--stage-2);padding-left:2.4cqw;white-space:nowrap}
+.m-caps .note strong{display:block;color:var(--on-stage);font-weight:500}
+
+/* mock 2: stat check */
+.m-sheet{position:absolute;inset:6cqw 7cqw;display:flex;flex-direction:column;justify-content:center;gap:2.2cqw}
+.m-sheet p{font:400 3.7cqw/1.35 var(--sans);color:var(--ink)}
+.m-sheet p.dim{color:var(--ink-3)}
+.flag{background:var(--wash);box-shadow:inset 0 -.14em 0 var(--accent);padding:0 .1em}
+.flag-soft{background:none;box-shadow:none;text-decoration:underline dotted var(--ink-3);text-decoration-thickness:.12em;text-underline-offset:.2em}
+.tags{display:flex;flex-wrap:wrap;gap:1.6cqw;margin-bottom:2.4cqw}
+.tag{display:inline-flex;align-items:center;gap:1.4cqw;font:500 2.6cqw/1 var(--sans);padding:1.3cqw 2cqw;border:1px solid var(--rule);border-radius:2px;background:var(--paper);color:var(--ink-2)}
+.tag svg{width:2.2cqw;height:2.2cqw}
+.tag-you{border-color:var(--accent);color:var(--ink)}
+.tag-done{color:var(--ink)}
+.tag-done svg{width:2.6cqw;height:2.6cqw}
+
+/* mock 3: focus crop */
+.m-win{position:absolute;inset:5cqw 7cqw 11.5cqw;background:var(--win);border-radius:1.6cqw;overflow:hidden;box-shadow:0 1px 2px rgba(0,0,0,.08),0 10px 24px -16px rgba(0,0,0,.35);display:flex;flex-direction:column}
+.m-bar{display:flex;align-items:center;gap:1.1cqw;height:6cqw;padding:0 2.4cqw;background:var(--win-2);border-bottom:1px solid var(--win-line);font:600 2.4cqw/1 var(--sans);color:var(--win-ink-2);flex:none}
+.m-bar i{width:1.5cqw;height:1.5cqw;border-radius:50%;background:var(--win-line)}
+.m-bar span{margin-left:1.4cqw}
+.tbl{position:relative;flex:1;display:grid;grid-template-columns:1.5fr .9fr .8fr .9fr;grid-template-rows:repeat(6,1fr);padding:1.6cqw 3cqw 2.4cqw;font:400 2.55cqw/1.1 var(--sans);color:var(--win-ink)}
+.tbl>span:not(.ov){display:flex;align-items:center;border-bottom:1px solid var(--win-line);white-space:nowrap;overflow:hidden}
+.tbl>span.th{font-weight:600;color:var(--win-ink-2);font-size:2.25cqw;text-transform:uppercase;letter-spacing:.04em}
+.tbl>span:nth-last-child(-n+6):not(.ov){border-bottom:0}
+.st{font-style:normal;font-weight:700}
+.st.paid{font-weight:400;color:var(--win-ink-2)}
+.tbl>.ov{position:absolute;inset:0;pointer-events:none;display:block}
+.tbl>.ov-view{grid-column:2/5;grid-row:2/5;margin:-.6cqw -1.2cqw;border:1.5px dashed var(--win-ink-2)}
+.tbl>.ov-focus{grid-column:4/5;grid-row:2/4;margin:.4cqw -.4cqw;border:2px solid var(--hl);background:rgba(49,73,220,.07)}
+.m-key{position:absolute;left:7cqw;right:7cqw;bottom:3.6cqw;display:flex;flex-wrap:wrap;gap:1.4cqw 5cqw;font:500 2.5cqw/1 var(--sans);color:var(--ink-2)}
+.m-key span{display:inline-flex;align-items:center;gap:1.6cqw}
+.m-key i{width:4.4cqw;height:2.8cqw}
+.m-key .k-focus{border:2px solid var(--accent);background:var(--wash)}
+.m-key .k-view{border:1.5px dashed var(--ink-2)}
+
+/* mock 4: contact sheet */
+.m-qa{position:absolute;inset:0;display:grid;grid-template-columns:auto minmax(0,1fr);gap:5cqw;align-items:center;padding:0 6cqw}
+.frames{display:grid;grid-template-columns:repeat(4,10.6cqw);gap:2.6cqw 2.2cqw}
+.frames li{display:flex;flex-direction:column;gap:1.1cqw}
+.fr{position:relative;display:block;aspect-ratio:9/16;background:var(--stage);border-radius:.8cqw;overflow:hidden}
+.fr .w{position:absolute;left:12%;right:12%;top:16%;height:32%;background:var(--win);border-radius:.5cqw}
+.fr .c{position:absolute;left:16%;right:16%;bottom:22%;height:5%;background:var(--on-stage);border-radius:.4cqw;opacity:.9}
+.fr .c2{position:absolute;left:26%;right:26%;bottom:14%;height:5%;background:var(--on-stage);border-radius:.4cqw;opacity:.9}
+.fr .h{position:absolute;left:30%;width:22%;bottom:22%;height:5%;background:var(--hl);border-radius:.4cqw}
+.fr.zoom .w{left:4%;right:4%;top:20%;height:44%}
+.fr.cut .w{left:40%;right:-34%}
+.fr.face .head{position:absolute;left:34%;width:32%;top:30%;aspect-ratio:1;border-radius:50%;background:#7B8088}
+.fr.face .body{position:absolute;left:18%;right:18%;top:56%;bottom:-10%;border-radius:40% 40% 0 0;background:#5F646B}
+.fr.face .c{bottom:auto;top:40%;z-index:1}
+.fr.face .c2{bottom:auto;top:48%;z-index:1}
+.fr.end .w{top:40%;height:12%;left:22%;right:22%;background:var(--on-stage-2)}
+.frames .ft{font:400 2.1cqw/1 var(--mono);color:var(--ink-3)}
+.frames .flagged .fr{box-shadow:0 0 0 .5cqw var(--paper),0 0 0 1cqw var(--accent)}
+.frames .flagged .ft{color:var(--ink);font-weight:600}
+.qa-key{display:flex;flex-direction:column;gap:2.6cqw}
+.qa-key ul{display:flex;flex-direction:column;gap:2.4cqw}
+.qa-key .k-h{font:600 2.2cqw/1.2 var(--mono);color:var(--ink-3);text-transform:uppercase;letter-spacing:.04em}
+.qa-key li{display:grid;grid-template-columns:auto 1fr;gap:.6cqw 1.8cqw;align-items:baseline;font:500 2.9cqw/1.25 var(--sans);color:var(--ink)}
+.qa-key li svg{width:2cqw;height:2cqw}
+.qa-key li span{font:400 2.2cqw/1 var(--mono);color:var(--ink-3);grid-column:2}
+.qa-key .k-n{font:400 2.5cqw/1.35 var(--sans);color:var(--ink-2);border-top:1px solid var(--rule);padding-top:2cqw}
+
+/* how it works */
+.route{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:24px;margin-top:clamp(44px,5vw,72px);position:relative;counter-reset:stop}
+.route::before{content:"";position:absolute;left:18px;right:calc(20% - 6px);top:17px;height:2px;background:var(--ink)}
+.route li{position:relative;padding-right:8px}
+.stop{position:relative;display:grid;place-items:center;width:36px;height:36px;border-radius:50%;background:var(--paper);border:2px solid var(--ink);font-weight:700;font-size:.9375rem}
+.route li:nth-child(3) .stop{background:var(--ink);color:var(--paper)}
+.route h3{font-size:1.125rem;margin-top:22px}
+.route p{margin-top:8px;font-size:.9688rem;color:var(--ink-2);text-wrap:pretty}
+.route .file{display:inline-block;margin-top:12px;font:400 .8125rem/1 var(--mono);color:var(--ink-3)}
+
+/* lanes */
+.lanes{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin-top:clamp(40px,5vw,64px);border-top:1px solid var(--rule);border-bottom:1px solid var(--rule)}
+.lane-c{padding:32px clamp(18px,2.4vw,36px) 36px;position:relative}
+.lane-c:first-child{padding-left:0}
+.lane-c:last-child{padding-right:0}
+.lane-c+.lane-c{background-image:linear-gradient(var(--ink-3) 50%,transparent 50%);background-size:2px 18px;background-repeat:repeat-y;background-position:left top}
+.lane-c .mk{width:26px;height:26px}
+.lane-c h3{font-size:clamp(1.75rem,2.6vw,2.25rem);letter-spacing:-.03em;margin-top:18px}
+.lane-c .act{margin-top:6px;font-weight:500;font-size:1.0625rem;text-wrap:balance}
+.lane-c p.d{margin-top:14px;color:var(--ink-2);font-size:.9688rem;text-wrap:pretty}
+.lane-c .eg{margin-top:18px;font-size:.875rem;color:var(--ink-3)}
+.lane-c .eg b{display:block;color:var(--ink);font-weight:500;margin-top:2px}
+.never{margin-top:clamp(40px,5vw,56px)}
+.never h3{font-size:1.3125rem}
+.never-list{display:grid;grid-template-columns:1fr 1fr;gap:16px 24px;margin-top:20px}
+.never-list li{padding-top:14px;border-top:1px solid var(--rule)}
+.never-list b{display:block;font-weight:600}
+.never-list span{display:block;margin-top:4px;font-size:.9375rem;color:var(--ink-2)}
+
+/* cost & privacy */
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:40px clamp(24px,3vw,48px)}
+.facts li{padding-top:16px;border-top:1px solid var(--rule)}
+.facts h3{font-size:1.1875rem}
+.facts p{margin-top:8px;color:var(--ink-2);font-size:1rem;text-wrap:pretty}
+.facts strong{color:var(--ink);font-weight:600}
+.aside{margin-top:36px;font-size:.9375rem;color:var(--ink-3);max-width:40em}
+
+/* doesn't */
+.nots li{display:grid;grid-template-columns:28px minmax(0,1fr);gap:14px;padding:18px 0;border-bottom:1px solid var(--rule)}
+.nots li:first-child{padding-top:4px}
+.nots svg{width:22px;height:22px;margin-top:.15em;color:var(--ink-3)}
+.nots b{display:block;font-weight:600;font-size:1.125rem;letter-spacing:-.01em}
+.nots span{display:block;margin-top:4px;color:var(--ink-2);font-size:.9688rem}
+
+/* get started */
+.steps{margin-top:8px}
+.steps>li{display:grid;grid-template-columns:3.2rem minmax(0,1fr);gap:16px;padding:28px 0;border-bottom:1px solid var(--rule)}
+.steps>li:first-child{padding-top:0}
+.steps .n{font-weight:700;font-size:2.25rem;line-height:1;letter-spacing:-.04em;color:var(--ink)}
+.steps h3{font-size:1.25rem}
+.steps p{margin-top:8px;color:var(--ink-2);max-width:36em;text-wrap:pretty}
+.code{position:relative;margin-top:16px;background:var(--stage);color:var(--on-stage);border-radius:4px}
+.code-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:42px;padding:5px 8px 5px 20px;border-bottom:1px solid var(--stage-2);font:500 .75rem/1 var(--sans);color:var(--on-stage-2);letter-spacing:.02em}
+.code pre{overflow-x:auto;padding:16px 20px 18px;font:400 .8125rem/1.7 var(--mono);tab-size:2}
+.code code{font-size:inherit;white-space:pre;background:none;padding:0;border-radius:0}
+.code .c{color:var(--on-stage-2)}
+.copy{min-height:32px;padding:0 12px;border:1px solid #3A3E44;border-radius:3px;background:var(--stage-2);color:var(--on-stage);font:500 .8125rem/1 var(--sans);cursor:pointer;transition:background-color .2s var(--ease),border-color .2s var(--ease)}
+.copy:hover{background:#30353B;border-color:#555B63}
+.copy:focus-visible{outline-color:#9AACFF}
+.req{margin-top:24px;font-size:.9375rem;color:var(--ink-3)}
+.more{display:inline-flex;align-items:center;gap:8px;margin-top:16px;font-weight:500}
+.more svg{width:13px;height:13px}
+
+/* faq */
+.faq details{border-bottom:1px solid var(--rule)}
+.faq details:first-child{border-top:1px solid var(--rule)}
+.faq summary{list-style:none;cursor:pointer;display:grid;grid-template-columns:minmax(0,1fr) 22px;gap:16px;align-items:center;padding:20px 0;font-weight:600;font-size:1.125rem;letter-spacing:-.01em}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:hover{color:var(--accent)}
+.pm{position:relative;width:14px;height:14px;justify-self:end}
+.pm::before,.pm::after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;margin-top:-1px;background:currentColor;transition:transform .3s var(--ease)}
+.pm::after{transform:rotate(90deg)}
+details[open] .pm::after{transform:rotate(0)}
+.faq .ans{padding:0 38px 22px 0;color:var(--ink-2);max-width:40em;text-wrap:pretty}
+.faq .ans p+p{margin-top:.8em}
+
+/* footer */
+.foot{margin-top:clamp(96px,12vw,168px);border-top:3px solid var(--ink);padding-top:28px;padding-bottom:56px;display:grid;grid-template-columns:repeat(12,minmax(0,1fr));column-gap:24px;row-gap:28px;font-size:.9375rem}
+.foot .f1{grid-column:1/6}
+.foot .f1 p{margin-top:12px;color:var(--ink-3);max-width:30em}
+.foot .f2{grid-column:7/10}
+.foot .f3{grid-column:10/13}
+.foot h2{font-size:.9375rem;letter-spacing:0;font-weight:600;margin-bottom:10px}
+.foot li+li{margin-top:6px}
+.foot a{color:var(--ink-2)}
+.foot a:hover{color:var(--accent)}
+
+/* entrance motion: the example list routes itself in */
+@media (prefers-reduced-motion:no-preference){
+  html{scroll-behavior:smooth}
+  .hero .hl{animation:wipe .9s var(--ease) .5s both}
+  .board .row{animation:arrive .7s var(--ease) both}
+  .board .row:nth-child(1){animation-delay:.75s}
+  .board .row:nth-child(2){animation-delay:.9s}
+  .board .row:nth-child(3){animation-delay:1.05s}
+  .board .row:nth-child(4){animation-delay:1.2s}
+  .board .row .lane{animation-delay:inherit}
+  .board .row .lane svg{animation:settle .8s var(--ease) both;animation-delay:inherit}
+  .board-foot{animation:arrive .7s var(--ease) 1.4s both}
+}
+@keyframes wipe{from{background-size:0 100%}to{background-size:100% 100%}}
+@keyframes arrive{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes settle{from{transform:translateX(-10px)}to{transform:none}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{transition:none!important;animation:none!important}}
+
+/* responsive */
+@media (max-width:1080px){
+  .hero-copy{grid-column:1/-1}
+  .hero-fig{grid-column:1/-1;max-width:720px}
+  h1{max-width:13em}
+}
+@media (max-width:900px){
+  .split>.sh,.split>.sb{grid-column:1/-1}
+  .route{grid-template-columns:1fr;gap:0;padding-left:0}
+  .route::before{left:17px;right:auto;top:18px;bottom:40px;width:2px;height:auto}
+  .route li{display:grid;grid-template-columns:36px minmax(0,1fr);column-gap:20px;padding-bottom:32px}
+  .route li:last-child{padding-bottom:0}
+  .route h3{margin-top:5px}
+  .route p,.route .file{grid-column:2}
+  .lanes{grid-template-columns:1fr;border-bottom:0}
+  .lane-c,.lane-c:first-child,.lane-c:last-child{padding:28px 0 32px}
+  .lane-c+.lane-c{background-image:linear-gradient(90deg,var(--ink-3) 50%,transparent 50%);background-size:18px 2px;background-repeat:repeat-x}
+  .foot .f1{grid-column:1/-1}
+  .foot .f2{grid-column:1/7}
+  .foot .f3{grid-column:7/13}
+}
+@media (max-width:760px){
+  .decs{grid-template-columns:1fr}
+  .facts,.never-list{grid-template-columns:1fr}
+  .ways{grid-template-columns:1fr;gap:20px}
+}
+@media (max-width:560px){
+  .hero{row-gap:44px}
+  .hero-fig{grid-template-columns:1fr;gap:24px}
+  .phone{width:68%;margin-top:0}
+  .lead{margin-top:22px}
+  .btn{flex:1 1 auto;justify-content:center}
+  .foot .f2,.foot .f3{grid-column:1/-1}
+  .steps>li{grid-template-columns:minmax(0,1fr);gap:10px}
+  .faq .ans{padding-right:0}
+  .m-qa{grid-template-columns:1fr;gap:4cqw;align-content:center}
+  .frames{grid-template-columns:repeat(8,minmax(0,1fr));gap:1.6cqw}
+  .frames .ft{font-size:2.3cqw}
+  .frames li:not(.flagged) .ft{visibility:hidden}
+  .qa-key{flex-direction:row;flex-wrap:wrap;gap:2cqw 6cqw}
+  .qa-key .k-h,.qa-key .k-n{display:none}
+  .qa-key li{font-size:3.6cqw}
+  .qa-key li span{font-size:3cqw}
+  .qa-key li svg{width:2.8cqw;height:2.8cqw}
+  .mock{aspect-ratio:4/3}
+  .m-caps p{font-size:5.4cqw}
+  .m-caps .note{font-size:3.4cqw}
+  .m-sheet p{font-size:4.6cqw}
+  .tag{font-size:3.4cqw}
+  .tag svg{width:2.8cqw;height:2.8cqw}
+  .tbl{font-size:3.3cqw}
+  .tbl>span.th{font-size:2.6cqw}
+  .m-key{font-size:3.4cqw}
+}
+</style>
+</head>
+<body id="top">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <symbol id="m-auto" viewBox="0 0 12 12"><circle cx="6" cy="6" r="5.2" fill="currentColor"/></symbol>
+  <symbol id="m-agent" viewBox="0 0 12 12"><rect x="1.4" y="1.4" width="9.2" height="9.2" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="m-you" viewBox="0 0 12 12"><path d="M6 .4 11.6 6 6 11.6.4 6Z" fill="currentColor"/></symbol>
+  <symbol id="i-down" viewBox="0 0 14 14"><path d="M7 1v11M2.5 7.5 7 12l4.5-4.5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-right" viewBox="0 0 14 14"><path d="M1 7h11M7.5 2.5 12 7l-4.5 4.5" fill="none" stroke="currentColor" stroke-width="1.6"/></symbol>
+  <symbol id="i-check" viewBox="0 0 14 14"><path d="M2 7.4 5.6 11 12 3.4" fill="none" stroke="currentColor" stroke-width="1.8"/></symbol>
+  <symbol id="i-not" viewBox="0 0 22 22"><circle cx="11" cy="11" r="9.2" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M4.6 17.4 17.4 4.6" stroke="currentColor" stroke-width="1.6"/></symbol>
+</svg>
+
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="top wrap">
+  <a class="brand" href="#top" aria-label="Jev Motion, back to top">
+    <svg viewBox="0 0 46 14" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="6" fill="currentColor"/><rect x="17.9" y="1.9" width="10.2" height="10.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M39 .5 45.5 7 39 13.5 32.5 7Z" fill="var(--accent)"/></svg>
+    Jev Motion
+  </a>
+  <nav aria-label="Sections">
+    <ul>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#lanes">Who decides</a></li>
+      <li><a href="#cost">Cost and privacy</a></li>
+      <li><a href="#start">Get started</a></li>
+      <li><a href="https://github.com/ankshvayt/jev-motion">GitHub</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main id="main">
+
+<section class="hero wrap" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <h1 id="hero-title">The small calls in your video edits, made and written&nbsp;down.</h1>
+    <p class="lead">An AI decision model makes the small, repeatable calls in your video edits and writes them down, so your AI agent can build the video and you only answer the questions that need a human.</p>
+    <div class="actions">
+      <a class="btn btn-primary" href="#how">See how it works <svg aria-hidden="true" focusable="false"><use href="#i-down"/></svg></a>
+      <a class="btn btn-quiet" href="https://github.com/ankshvayt/jev-motion#readme">Get started <svg aria-hidden="true" focusable="false"><use href="#i-right"/></svg></a>
+    </div>
+    <p class="meta">Free and open source. Made for videos built with <dfn>HyperFrames</dfn>, a tool that makes videos from web pages (HTML).</p>
+  </div>
+
+  <figure class="hero-fig">
+    <div class="phone" role="img" aria-label="A frame from the example video: a billing app's invoice list, with the caption 'Most teams lose 3 hours a week to manual invoices' and the words '3 hours' highlighted.">
+      <div class="ph-win">
+        <div class="ph-bar"><i></i><i></i><i></i><span>Invoices</span></div>
+        <div class="ph-rows">
+          <div class="ph-row"><b></b><b></b><em>Overdue</em></div>
+          <div class="ph-row"><b></b><b></b><em>Overdue</em></div>
+          <div class="ph-row"><b></b><b></b><em class="paid">Paid</em></div>
+          <div class="ph-row"><b></b><b></b><em class="paid">Due</em></div>
+          <div class="ph-row"><b></b><b></b><em class="paid">Paid</em></div>
+          <div class="ph-row"><b></b><b></b><em>Overdue</em></div>
+        </div>
+      </div>
+      <p class="ph-cap">Most teams lose <span class="hl">3&nbsp;hours</span> a week to manual invoices.</p>
+      <div class="ph-time">
+        <div class="ph-track">
+          <svg style="left:2%"><use href="#m-auto"/></svg>
+          <svg class="mk-you" style="left:10%"><use href="#m-you"/></svg>
+          <svg style="left:42%"><use href="#m-agent"/></svg>
+          <svg class="mk-you" style="left:76%"><use href="#m-you"/></svg>
+        </div>
+        <div class="ph-tc"><span>0:01</span><span>0:12</span></div>
+      </div>
+    </div>
+
+    <div class="board">
+      <div class="board-head"><span class="mono">decisions.md</span><span>Example</span></div>
+      <ol>
+        <li class="row">
+          <span class="tc">0:00</span>
+          <span class="q">Highlight anything in line&nbsp;1?</span>
+          <span class="a">Yes: &ldquo;3 hours&rdquo;. 91% sure.</span>
+          <span class="lane"><svg class="mk" aria-hidden="true"><use href="#m-auto"/></svg>Auto</span>
+        </li>
+        <li class="row">
+          <span class="tc">0:01</span>
+          <span class="q">&ldquo;3 hours a week&rdquo; sounds measured. Needs a source?</span>
+          <span class="a">A claim, so a person decides.</span>
+          <span class="lane"><svg class="mk mk-you" aria-hidden="true"><use href="#m-you"/></svg>You</span>
+        </li>
+        <li class="row">
+          <span class="tc">0:05</span>
+          <span class="q">Where to zoom on the billing screen?</span>
+          <span class="a">The Status column, on the overdue rows.</span>
+          <span class="lane"><svg class="mk" aria-hidden="true"><use href="#m-agent"/></svg>Agent</span>
+        </li>
+        <li class="row">
+          <span class="tc">0:09</span>
+          <span class="q">&ldquo;One click&rdquo;: is that a stat?</span>
+          <span class="a">A number word, flagged to be safe.</span>
+          <span class="lane"><svg class="mk mk-you" aria-hidden="true"><use href="#m-you"/></svg>You</span>
+        </li>
+      </ol>
+      <div class="board-foot"><svg class="mk mk-you" aria-hidden="true"><use href="#m-you"/></svg>2 questions for you, sent in one message.</div>
+    </div>
+
+    <figcaption>Example: a 12-second vertical explainer about sorting unpaid invoices in a made-up billing app. Each answer lands in a <dfn>lane</dfn>, which says who acts on it: the build itself, your AI agent, or you.</figcaption>
+  </figure>
+</section>
+
+<section class="sec wrap" id="problem" aria-labelledby="problem-title">
+  <div class="sec-in split">
+    <div class="sh">
+      <h2 id="problem-title">A short video hides dozens of tiny decisions.</h2>
+    </div>
+    <div class="sb">
+      <ul class="asks">
+        <li>Which words in this caption deserve a highlight?</li>
+        <li>That number in the voiceover: does it need a source?</li>
+        <li>Where should the shot zoom in on this screenshot?</li>
+        <li>Does any frame of the finished video look broken?</li>
+      </ul>
+      <div class="ways">
+        <div>
+          <h3>By hand, it is slow.</h3>
+          <p>Each call takes a moment, but there are dozens in every video, and they come back each time the script changes.</p>
+        </div>
+        <div>
+          <h3>Left to your AI agent, it is costly.</h3>
+          <p>An <dfn>AI coding agent</dfn> (an assistant that writes and runs code for you, such as Claude Code or Codex) can make them, but it costs a lot and answers differently from one run to the next.</p>
+        </div>
+      </div>
+      <p class="turn">Jev Motion hands these calls to <dfn>Jev</dfn>, a decision model from TypeSafe that answers small, yes-or-no style questions and says how confident it is. Every answer is written down, so the same question gets the same answer next time.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="decisions" aria-labelledby="decisions-title">
+  <div class="sec-in split">
+    <div class="sh"><h2 id="decisions-title">Four decisions it can make for you.</h2></div>
+    <div class="sb"><p class="intro">Each one is a handful of small questions with a confidence attached. Here is what each looks like in the example video.</p></div>
+  </div>
+
+  <div class="decs">
+    <article class="dec">
+      <div class="mock mock-dark" role="img" aria-label="Two caption lines on a dark video frame. In 'Most teams lose 3 hours a week to manual invoices', the words '3 hours' are highlighted. 'Here is the fix.' is left plain.">
+        <div class="m-caps">
+          <div class="cg"><p>Most teams lose <span class="hl">3&nbsp;hours</span> a week to manual invoices.</p><span class="note"><strong>highlight</strong>2 words</span></div>
+          <div class="cg"><p>Here is the fix.</p><span class="note"><strong>no highlight</strong>left plain</span></div>
+        </div>
+      </div>
+      <h3>Caption highlights</h3>
+      <p>Picks which caption lines get a highlight, and which one to three words in each. Lines without a clear point stay plain, so the highlights keep their punch.</p>
+      <p class="who"><svg class="mk" aria-hidden="true"><use href="#m-auto"/></svg><span><b>Usually auto.</b> When the model is unsure, your agent decides.</span></p>
+    </article>
+
+    <article class="dec">
+      <div class="mock" role="img" aria-label="The voiceover transcript. '3 hours a week' is marked with a tag reading 'needs a source?'. 'One click' is flagged as a number word and marked 'not a stat'.">
+        <div class="m-sheet">
+          <p>Most teams lose <span class="flag">3 hours a week</span> to manual invoices.</p>
+          <div class="tags"><span class="tag tag-you"><svg class="mk-you" aria-hidden="true"><use href="#m-you"/></svg>Needs a source?</span></div>
+          <p class="dim">Here is the fix.</p>
+          <p><span class="flag-soft">One click</span>, and your inbox is clean.</p>
+          <div class="tags"><span class="tag">Number word</span><span class="tag tag-done"><svg aria-hidden="true"><use href="#i-check"/></svg>You marked: not a stat</span></div>
+        </div>
+      </div>
+      <h3>Stat-claim checks</h3>
+      <p>Spots spoken numbers that sound like measured facts and asks you whether they need a source. It also catches number words like &ldquo;one click&rdquo;, which you can mark as not a stat. Add your source notes and it checks whether a claim&rsquo;s exact words appear in them.</p>
+      <p class="who"><svg class="mk mk-you" aria-hidden="true"><use href="#m-you"/></svg><span><b>Always you.</b> A claim never goes ahead on its own.</span></p>
+    </article>
+
+    <article class="dec">
+      <div class="mock" role="img" aria-label="A billing app's invoice table. A blue focus box surrounds the Status column on the two overdue invoices. A dashed box marks the wider area viewers will actually see.">
+        <div class="m-win">
+          <div class="m-bar"><i></i><i></i><i></i><span>Invoices</span></div>
+          <div class="tbl">
+            <span class="th">Client</span><span class="th">Amount</span><span class="th">Due</span><span class="th">Status</span>
+            <span>Harbor &amp; Co.</span><span>$1,240</span><span>Sep 30</span><span><em class="st">Overdue</em></span>
+            <span>Pine St. Bakery</span><span>$380</span><span>Oct 2</span><span><em class="st">Overdue</em></span>
+            <span>Atlas Freight</span><span>$2,915</span><span>Oct 14</span><span><em class="st paid">Paid</em></span>
+            <span>Mosaic Dental</span><span>$760</span><span>Oct 21</span><span><em class="st paid">Due</em></span>
+            <span>Brightline</span><span>$1,105</span><span>Oct 28</span><span><em class="st paid">Paid</em></span>
+            <span class="ov ov-view" aria-hidden="true"></span>
+            <span class="ov ov-focus" aria-hidden="true"></span>
+          </div>
+        </div>
+        <div class="m-key"><span><i class="k-focus"></i>Focus box</span><span><i class="k-view"></i>What viewers will see</span></div>
+      </div>
+      <h3>Focus crops</h3>
+      <p>Proposes where to zoom on a screenshot or a frame of a screen recording. It saves a copy with the box drawn on, plus the area viewers will actually see. The box is always checked before it is used, and if it is off you can ask again more precisely or give your own.</p>
+      <p class="who"><svg class="mk" aria-hidden="true"><use href="#m-agent"/></svg><span><b>Always checked.</b> Your agent, or you, looks first.</span></p>
+    </article>
+
+    <article class="dec">
+      <div class="mock" role="img" aria-label="A contact sheet of eight frames sampled every 1.5 seconds. Two are flagged: at 0:03 an app window is cut off at the edge, and at 0:09 a caption covers a face.">
+        <div class="m-qa">
+          <ol class="frames">
+            <li><span class="fr"><i class="w"></i><i class="c"></i><i class="h"></i></span><span class="ft">0:00</span></li>
+            <li><span class="fr"><i class="w"></i><i class="c"></i><i class="c2"></i></span><span class="ft">0:01.5</span></li>
+            <li class="flagged"><span class="fr cut"><i class="w"></i><i class="c"></i></span><span class="ft">0:03</span></li>
+            <li><span class="fr"><i class="w"></i><i class="c"></i></span><span class="ft">0:04.5</span></li>
+            <li><span class="fr zoom"><i class="w"></i><i class="c"></i></span><span class="ft">0:06</span></li>
+            <li><span class="fr"><i class="w"></i><i class="c2"></i></span><span class="ft">0:07.5</span></li>
+            <li class="flagged"><span class="fr face"><i class="head"></i><i class="body"></i><i class="c"></i><i class="c2"></i></span><span class="ft">0:09</span></li>
+            <li><span class="fr end"><i class="w"></i></span><span class="ft">0:10.5</span></li>
+          </ol>
+          <div class="qa-key">
+            <span class="k-h">Flagged for a look</span>
+            <ul>
+              <li><svg aria-hidden="true"><use href="#m-agent"/></svg>Edge cut off<span>0:03</span></li>
+              <li><svg aria-hidden="true"><use href="#m-agent"/></svg>Caption over a face<span>0:09</span></li>
+            </ul>
+            <span class="k-n">Advice, not a verdict.</span>
+          </div>
+        </div>
+      </div>
+      <h3>Frame QA triage</h3>
+      <p>After you render, it samples frames from the video and flags likely problems: cut-off edges, text covered by something, captions over a face, empty areas. It is advice pointing someone at a frame to look at, never a pass or a fail.</p>
+      <p class="who"><svg class="mk" aria-hidden="true"><use href="#m-agent"/></svg><span><b>Always looked at.</b> Your agent checks each flagged frame.</span></p>
+    </article>
+  </div>
+</section>
+
+<section class="sec wrap" id="how" aria-labelledby="how-title">
+  <div class="sec-in split">
+    <div class="sh"><h2 id="how-title">How it works.</h2></div>
+    <div class="sb"><p class="intro"><dfn>jevm</dfn> is the command behind Jev Motion. Once it is set up, your AI agent runs it for you, one video at a time.</p></div>
+  </div>
+  <ol class="route">
+    <li>
+      <span class="stop" aria-hidden="true">1</span>
+      <h3>Your transcript and assets</h3>
+      <p>The words of your voiceover, with timings, and a list of the screenshots and recordings you plan to show.</p>
+    </li>
+    <li>
+      <span class="stop" aria-hidden="true">2</span>
+      <h3>jevm asks Jev small questions</h3>
+      <p>It turns them into short questions for Jev, or for a <dfn>local Decider</dfn> (an optional decision server running on your own computer).</p>
+    </li>
+    <li>
+      <span class="stop" aria-hidden="true">3</span>
+      <h3>A decisions list</h3>
+      <p>Every answer goes into one list, each with its confidence and its lane. Questions for you arrive together.</p>
+      <span class="file">decisions.md</span>
+    </li>
+    <li>
+      <span class="stop" aria-hidden="true">4</span>
+      <h3>Your agent builds and renders</h3>
+      <p>Your AI agent settles the calls in its lane, builds the video in HyperFrames from the list, and renders it.</p>
+    </li>
+    <li>
+      <span class="stop" aria-hidden="true">5</span>
+      <h3>A frame check</h3>
+      <p>jevm samples frames from the render and flags any that look wrong, for someone to look at.</p>
+    </li>
+  </ol>
+</section>
+
+<section class="sec wrap" id="lanes" aria-labelledby="lanes-title">
+  <div class="sec-in split">
+    <div class="sh"><h2 id="lanes-title">Who decides what.</h2></div>
+    <div class="sb"><p class="intro">Every answer lands in one of three lanes. The lane depends on how sure the model is and on how risky the call is, so the safe calls flow through and the risky ones stop at a person.</p></div>
+  </div>
+
+  <div class="lanes">
+    <div class="lane-c">
+      <svg class="mk" aria-hidden="true"><use href="#m-auto"/></svg>
+      <h3>Auto</h3>
+      <p class="act">The build can just use it.</p>
+      <p class="d">Safe, reversible calls where the model is clearly sure, and asking the question with the options swapped gives the same answer. Your agent can still change it.</p>
+      <p class="eg">For example <b>Highlight &ldquo;3 hours&rdquo; in line 1.</b></p>
+    </div>
+    <div class="lane-c">
+      <svg class="mk" aria-hidden="true"><use href="#m-agent"/></svg>
+      <h3>Agent</h3>
+      <p class="act">Your AI agent reviews it, and can override.</p>
+      <p class="d">Calls near the line, answers that change when the options are swapped, anything that needs a look at an image, and anything no model answered.</p>
+      <p class="eg">For example <b>Check the zoom box on the billing screen.</b></p>
+    </div>
+    <div class="lane-c">
+      <svg class="mk mk-you" aria-hidden="true"><use href="#m-you"/></svg>
+      <h3>You</h3>
+      <p class="act">Claims and anything risky always come to you.</p>
+      <p class="d">Your agent collects every question in this lane and sends them all in one message, then waits for your answer before acting on them.</p>
+      <p class="eg">For example <b>Does &ldquo;3 hours a week&rdquo; need a source?</b></p>
+    </div>
+  </div>
+
+  <div class="never split">
+    <div class="sh"><h3>Some calls are never automatic.</h3></div>
+    <div class="sb">
+      <p class="prose">Whatever the model says and however a project is set up, these never go to the auto lane. The rule is written into the code, not a setting you could flip by accident. <a href="never-auto.html">Read the never-auto list</a>.</p>
+      <ul class="never-list">
+        <li><b>Claims and stats</b><span>A number that sounds measured, and whether a claim matches its source. A person has to stand behind these.</span></li>
+        <li><b>Crops and frame checks</b><span>Where a zoom sits, and which frames look wrong. Someone has to look at the image.</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="cost" aria-labelledby="cost-title">
+  <div class="sec-in split">
+    <div class="sh"><h2 id="cost-title">What it costs, and what stays private.</h2></div>
+    <div class="sb">
+      <ul class="facts">
+        <li>
+          <h3>See the price first.</h3>
+          <p>Every run can show an estimate before anything is sent (<code>--dry-run</code>): how many questions, and roughly what they will cost.</p>
+        </li>
+        <li>
+          <h3>Every run has a cap.</h3>
+          <p>By default <strong>$0.10 per run</strong> for a short video and <strong>$1.00</strong> for a long one. If the estimate is over, nothing is sent. In our tests, a full short-video run cost well under one cent.</p>
+        </li>
+        <li>
+          <h3>Your key stays on your machine.</h3>
+          <p>Your Jev key lives in a local <code>.env</code> file in your project. It is never printed, logged or saved in any output.</p>
+        </li>
+        <li>
+          <h3>No key? It still works.</h3>
+          <p>Without a key, nothing goes to Jev and your agent makes those calls itself. A local Decider, if you run one, can answer some questions at no cost.</p>
+        </li>
+      </ul>
+      <p class="aside">Answers are saved, so asking the same question again costs nothing. Two switches keep things closer to home: one sends nothing to TypeSafe, one sends no images at all.</p>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="limits" aria-labelledby="limits-title">
+  <div class="sec-in split">
+    <div class="sh"><h2 id="limits-title">What it doesn&rsquo;t do.</h2></div>
+    <div class="sb">
+      <ul class="nots">
+        <li><svg aria-hidden="true"><use href="#i-not"/></svg><div><b>It never edits your video.</b><span>jevm writes a list of decisions. Your agent, or you, changes the video.</span></div></li>
+        <li><svg aria-hidden="true"><use href="#i-not"/></svg><div><b>It doesn&rsquo;t replace HyperFrames&rsquo; own checks.</b><span>Keep running them exactly as you do now.</span></div></li>
+        <li><svg aria-hidden="true"><use href="#i-not"/></svg><div><b>It covers HyperFrames only.</b><span>Other video tools are out of scope.</span></div></li>
+        <li><svg aria-hidden="true"><use href="#i-not"/></svg><div><b>Frame checks cover vertical short videos only, for now.</b><span>Long, horizontal videos still get highlights, stat checks and crops.</span></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="start" aria-labelledby="start-title">
+  <div class="sec-in split">
+    <div class="sh">
+      <h2 id="start-title">Get started.</h2>
+      <p class="req">You need Python 3.15 or newer, plus ffmpeg and ffprobe (they usually come together), installed on your computer.</p>
+    </div>
+    <div class="sb">
+      <ol class="steps">
+        <li>
+          <span class="n" aria-hidden="true">1</span>
+          <div>
+            <h3>Install it once</h3>
+            <p>Clone the repository to a fixed place outside your project, then link it so <code>jevm</code> works as a command.</p>
+            <div class="code">
+              <div class="code-bar"><span>Terminal</span><button class="copy" type="button" data-copy hidden>Copy</button></div>
+              <pre><code>git clone https://github.com/ankshvayt/jev-motion ~/tools/jev-motion
+mkdir -p ~/.local/bin
+ln -s ~/tools/jev-motion/jevm.py ~/.local/bin/jevm
+jevm --help</code></pre>
+            </div>
+            <p>Optional: put your Jev key in a <code>.env</code> file in your project, as <code>JEV_API</code>.</p>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">2</span>
+          <div>
+            <h3>Copy the example kit and transcribe</h3>
+            <p>A <dfn>kit</dfn> describes your style: canvas sizes, caption limits, highlight colour. Start from the neutral example, then turn your voiceover into a word-by-word transcript with HyperFrames. If you will zoom on screenshots, list them in an <code>assets.json</code> file too.</p>
+            <div class="code">
+              <div class="code-bar"><span>Terminal, in your project folder</span><button class="copy" type="button" data-copy hidden>Copy</button></div>
+              <pre><code>cp -r ~/tools/jev-motion/examples/kit jevm-kit
+npx hyperframes transcribe assets/voiceover.wav -d .</code></pre>
+            </div>
+          </div>
+        </li>
+        <li>
+          <span class="n" aria-hidden="true">3</span>
+          <div>
+            <h3>Tell your agent</h3>
+            <p>Paste the ready-made block from the README into your agent&rsquo;s instructions: <code>CLAUDE.md</code> for Claude Code, <code>AGENTS.md</code> for Codex. From then on your agent runs the loop and brings you only the questions that need you.</p>
+            <a class="more" href="https://github.com/ankshvayt/jev-motion#use-it-from-claude-code-or-codex">Copy the block from the README <svg aria-hidden="true" focusable="false"><use href="#i-right"/></svg></a>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="sec wrap" id="faq" aria-labelledby="faq-title">
+  <div class="sec-in split">
+    <div class="sh"><h2 id="faq-title">Questions.</h2></div>
+    <div class="sb faq">
+      <details>
+        <summary>Do I need to code?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>No. You paste a few commands into a terminal once, during setup. After that your AI agent runs jevm and brings you only the questions that need a person.</p></div>
+      </details>
+      <details>
+        <summary>What is Jev?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Jev is a decision model from TypeSafe. Instead of writing long answers, it answers small, typed questions (yes or no, pick one, draw a box) and says how sure it is. Jev Motion is an unofficial client for it.</p></div>
+      </details>
+      <details>
+        <summary>Can I use my own brand style?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Yes. Your style lives in a kit: a small folder that sets your canvas sizes, safe areas, caption limits, highlight colour, how far a crop may zoom, and a short description of your look for the frame checks. Jev Motion ships only a neutral example to copy. <a href="kits.html">How kits work</a>.</p></div>
+      </details>
+      <details>
+        <summary>What if the AI gets a crop wrong?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Crops are never used automatically. Look at the saved overlay, which shows the box and the area viewers will see. If the box is off, ask again with a more specific description, or give the box yourself as pixel corners on the image. The overlay is redrawn so you can check again.</p></div>
+      </details>
+      <details>
+        <summary>Does it work with Codex?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Yes. Paste the same block into <code>AGENTS.md</code> instead of <code>CLAUDE.md</code>. jevm is a plain command-line tool, so it does not depend on one particular agent.</p></div>
+      </details>
+      <details>
+        <summary>What does it cost?<span class="pm" aria-hidden="true"></span></summary>
+        <div class="ans"><p>Jev Motion itself is free. Questions sent to Jev are paid for on your own key: you see an estimate before each run, and each run is capped (by default $0.10 for a short video, $1.00 for a long one). Saved answers make re-runs free. In our tests, a full short-video run cost well under one cent.</p></div>
+      </details>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot wrap">
+  <div class="f1">
+    <a class="brand" href="#top" aria-label="Jev Motion, back to top">
+      <svg viewBox="0 0 46 14" aria-hidden="true" focusable="false"><circle cx="7" cy="7" r="6" fill="currentColor"/><rect x="17.9" y="1.9" width="10.2" height="10.2" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M39 .5 45.5 7 39 13.5 32.5 7Z" fill="var(--accent)"/></svg>
+      Jev Motion
+    </a>
+    <p>MIT licence. An unofficial client, not affiliated with TypeSafe or HeyGen/HyperFrames.</p>
+  </div>
+  <nav class="f2" aria-labelledby="foot-docs">
+    <h2 id="foot-docs">Read more</h2>
+    <ul>
+      <li><a href="decisions.html">The decisions list</a></li>
+      <li><a href="never-auto.html">Never-automatic calls</a></li>
+      <li><a href="kits.html">Kits</a></li>
+      <li><a href="fallback.html">Backends and fallback</a></li>
+      <li><a href="question-sets.html">Question sets</a></li>
+    </ul>
+  </nav>
+  <nav class="f3" aria-labelledby="foot-src">
+    <h2 id="foot-src">Source</h2>
+    <ul>
+      <li><a href="https://github.com/ankshvayt/jev-motion">Repository on GitHub</a></li>
+      <li><a href="https://github.com/ankshvayt/jev-motion#readme">README</a></li>
+      <li><a href="https://github.com/ankshvayt/jev-motion/blob/main/LICENSE">Licence</a></li>
+    </ul>
+  </nav>
+</footer>
+
+<p class="sr-only" role="status" id="copy-status"></p>
+<script>
+(function(){
+  var status=document.getElementById('copy-status');
+  document.querySelectorAll('[data-copy]').forEach(function(btn){
+    btn.hidden=false;
+    btn.setAttribute('aria-label','Copy these commands');
+    btn.addEventListener('click',function(){
+      var code=btn.closest('.code').querySelector('code');
+      var text=code.textContent;
+      var done=function(msg,label){btn.textContent=label;status.textContent=msg;setTimeout(function(){btn.textContent='Copy';},1800);};
+      var select=function(){var r=document.createRange();r.selectNodeContents(code);var s=window.getSelection();s.removeAllRanges();s.addRange(r);done('Commands selected. Press Command or Control and C to copy.','Selected');};
+      if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){done('Commands copied to the clipboard.','Copied');},select);}else{select();}
+    });
+  });
+})();
+</script>
+</body>
+</html>
