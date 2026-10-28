@@ -82,7 +82,7 @@ The three "no answer" reasons (`jev_unavailable`, `jev_error`, `local_unavailabl
 ## Re-running and resolving
 
 - Running `plan` again replaces a module's rows. A row whose proposed `value` did not change keeps its `status` and `resolved`; a changed value resets the row to `proposed`.
-- `crop` replaces only its own `AST-01:<beat>` row.
+- `crop` replaces only its own `AST-01:<beat>` row. With `--box` no model is asked and the row is written already `overridden` (`resolved.by` is `agent` or `human`, `evidence.backend` is `none`).
 - `jevm resolve decisions.json ID[,ID...] (--accept | --value V) --by agent|human [--note TEXT]` marks rows `accepted` (the proposal stands) or `overridden` (with `V`, parsed as JSON when it parses, else kept as text). The row's own `value` stays as the proposal beside the override. An unknown id exits 2 and changes nothing.
 - Every write is atomic (temp file, then rename). A file jevm cannot read is never overwritten, so resolutions are never lost.
 

@@ -110,14 +110,21 @@ def build_parser():
     _kit_flag(plan_p)
     _spend_flags(plan_p)
 
-    crop_p = commands.add_parser("crop", help="propose a focus crop (AST-01) for one beat",
-                                 description="Propose where a window's focus should sit on a frame. Writes an AST-01 row "
-                                 "to decisions.json and crops/<beat>.jpg (the frame with the proposed box over it).")
+    crop_p = commands.add_parser("crop", help="propose or set a focus crop (AST-01) for one beat",
+                                 description="Propose where a window's focus should sit on a frame, or set it from a pixel "
+                                 "box with --box (no model is asked). Writes an AST-01 row to decisions.json and "
+                                 "crops/<beat>.jpg (the frame with the box over it) and prints one line: p, box_px, focus, clamped.")
     crop_p.add_argument("spec", metavar="spec.json")
     crop_p.add_argument("--beat", required=True, metavar="B", help="beat id; the row is AST-01:<B>")
     crop_p.add_argument("--asset", required=True, metavar="A", help="asset id from the spec (a video needs --t)")
     crop_p.add_argument("--t", type=float, metavar="S", help="second of the clip to cut the frame at (videos)")
-    crop_p.add_argument("--want", required=True, metavar="TEXT", help="the whole region the shot needs to show")
+    crop_p.add_argument("--want", metavar="TEXT", help="the whole region the shot needs to show (required without --box)")
+    crop_p.add_argument("--box", metavar="x0,y0,x1,y1",
+                        help="override: a box in pixels on the source image (a video: the frame at --t, native size). "
+                        "Sends nothing to any model; the row is marked overridden. A box partly outside the image is "
+                        "clipped, one wholly outside exits 2")
+    crop_p.add_argument("--by", choices=("agent", "human"), default="agent", help="with --box, who decided (default: agent)")
+    crop_p.add_argument("--note", default="", metavar="TEXT", help="with --box, why")
     crop_p.add_argument("--body", metavar="WxH", help="window body in px (default: the kit's; long-form needs it)")
     _kit_flag(crop_p)
     _spend_flags(crop_p)
@@ -208,7 +215,7 @@ def _run_plan(args):
 def _run_crop(args):
     return runner.crop(args.spec, beat=args.beat, asset=args.asset, t=args.t, want=args.want, body=args.body,
                        dry_run=args.dry_run, no_jev=args.no_jev, no_images=args.no_images, budget=args.budget,
-                       kit_dir=args.kit_dir)
+                       kit_dir=args.kit_dir, box=args.box, by=args.by, note=args.note)
 
 
 def _run_qa(args):
@@ -217,7 +224,10 @@ def _run_qa(args):
 
 
 def _run_resolve(args):
-    return decisions_io.cli_resolve(args.decisions, args.ids, args.accept, args.value, args.by, args.note)
+    rc = decisions_io.cli_resolve(args.decisions, args.ids, args.accept, args.value, args.by, args.note)
+    if rc == 0 and args.value is not None:
+        runner.redraw_overlays(args.decisions, _ids(args.ids))
+    return rc
 
 
 HANDLERS = {"kit": _run_kit, "spec": _run_spec, "plan": _run_plan, "crop": _run_crop, "qa": _run_qa,

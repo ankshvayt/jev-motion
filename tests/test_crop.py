@@ -71,6 +71,14 @@ class CropCase(unittest.TestCase):
         kw.update(over)
         return assets.crop_decide([presence, box], **kw)
 
+    TIGHT = (576.0, 432.0, 1344.0, 1026.0)  # BOX as source px on the 1920x1080 frame
+
+    def override(self, tight=TIGHT, **over):
+        kw = dict(fit=self.fit, body=self.body, scale_range=self.scale_range, target=TARGET, asset_id="a_demo", t=20.8,
+                  want=WANT, policy=self.policy, by="agent", note="tight")
+        kw.update(over)
+        return assets.crop_override(tight, **kw)
+
     def fallback_presence(self, p=0.0):
         """A presence answer that cannot be the gate: Decider fell back to Jev."""
         return self.presence_answer(p, backend="jev", reasons=["backend_fallback"])
@@ -278,6 +286,37 @@ class ValueTests(CropCase):
         self.assert_focus_in_region(v)
 
 
+class OverrideTests(CropCase):
+    def test_focus_value_is_what_the_model_path_gives_for_the_same_box(self):
+        model = self.decide(self.fallback_presence(), self.box_answer(vis=0.9))["value"]
+        boxed = self.override()["value"]
+        for key in ("found", "box_px", "box", "focus", "body", "clamped"):
+            self.assertEqual(boxed[key], model[key], key)
+        direct = assets.focus_value(self.TIGHT, fit=self.fit, body=self.body, scale_range=self.scale_range,
+                                    base={"asset": "a_demo", "t": 20.8, "want": WANT})
+        self.assertEqual(direct, model)
+
+    def test_override_row_is_resolved_by_the_caller_and_in_the_agent_lane(self):
+        row = self.override(by="human", note="why")
+        self.assertEqual((row["id"], row["lane"], row["status"], row["p"], row["confidence"]),
+                         ("AST-01:s03", "agent", "overridden", None, None))
+        self.assertEqual(row["evidence"]["backend"], "none")
+        self.assertEqual((row["resolved"]["by"], row["resolved"]["note"], row["resolved"]["value"]),
+                         ("human", "why", row["value"]))
+
+    def test_override_clamps_a_small_box_and_a_corner_box(self):
+        small = self.override((950.0, 530.0, 970.0, 550.0))["value"]
+        self.assertIn("scale", small["clamped"])
+        self.assertEqual(small["focus"]["scale"], self.scale_range[1])
+        corner = self.override((0.0, 0.0, 400.0, 300.0))["value"]
+        self.assertTrue({"x", "y"} & set(corner["clamped"]))
+
+    def test_override_makes_no_network_call(self):
+        with mock.patch.object(socket, "socket", side_effect=AssertionError("network")), \
+                mock.patch.object(urllib.request, "urlopen", side_effect=AssertionError("network")):
+            self.override()
+
+
 class FailureTests(CropCase):
     def test_failed_box_routes_to_agent(self):
         row = self.decide(self.fallback_presence(), self.box_answer(error="jev_unavailable"))
@@ -341,6 +380,27 @@ class OverlayTests(CropCase):
         row = self.decide(self.fallback_presence(), self.box_answer(vis=0.9, frac=(0.2, 70 / 290, 0.6, 170 / 290)), fit=fit)
         out = assets.overlay(sent, row, fit, self.tmp / "o.jpg")
         self.assertEqual(image_size(out)[:2], (500, 290))
+        self.assertGreater(mean_luma(out), mean_luma(sent) + 0.5)
+
+    def black_frame(self):
+        sent = self.tmp / "sent.jpg"
+        self.run_ffmpeg("-f", "lavfi", "-i", "color=c=black:s=1568x882", "-frames:v", "1", "-update", "1", str(sent))
+        return sent
+
+    def test_overridden_overlay_differs_from_the_model_overlay_and_shows_a_clamped_view(self):
+        sent = self.black_frame()
+        row = self.override((0.0, 0.0, 400.0, 300.0))          # clamped: the VIEW rectangle moves off the red box
+        self.assertTrue(row["value"]["clamped"])
+        out = assets.overlay(sent, row, self.fit, self.tmp / "o.jpg")
+        plain = dict(row, status="proposed", p=0.9)
+        self.assertNotEqual(out.read_bytes(), assets.overlay(sent, plain, self.fit, self.tmp / "p.jpg").read_bytes())
+        self.assertGreater(mean_luma(out), mean_luma(sent) + 0.5)
+
+    def test_overlay_of_a_focus_only_value_draws_the_view_rectangle(self):
+        sent = self.black_frame()
+        row = {"status": "overridden", "p": None, "value": {"found": True, "body": self.body,
+                                                            "focus": {"scale": 2.0, "x": 500.0, "y": 300.0}}}
+        out = assets.overlay(sent, row, self.fit, self.tmp / "v.jpg")
         self.assertGreater(mean_luma(out), mean_luma(sent) + 0.5)
 
     def test_overlay_of_a_row_without_a_box_is_the_plain_frame(self):

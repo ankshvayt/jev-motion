@@ -5,10 +5,11 @@ bundled, question set `crop_box`, Jev only). `crop_decide` gates on the presence
 aspect and turns it into the focus helper's `(scale, x, y)` through `geometry`. Rows are never `auto`: a human or
 the agent looks at the overlay. `crop_decide` reads answers only and never touches the network.
 """
+from datetime import datetime, timezone
 from pathlib import Path
 
 from core.policy import decision_policy
-from core.rows import error_route, evidence_from, make_row
+from core.rows import code_evidence, error_route, evidence_from, make_row
 from jevlib.images import draw_rects, unfit_box
 from jevlib.request import Request, box_frac, image_ref, load_qset, noul_p, thresholds_for
 from modules.universal import geometry
@@ -48,6 +49,38 @@ def _gate(presence, box):
         if p is not None:
             return box, p, thresholds_for(box.request.qs, "jev")
     return None
+
+
+def focus_value(tight, *, fit, body, scale_range, base):
+    """The found AST-01 value for `tight`, a box in source px: the one place a box becomes `box_px`, `box`, `focus`,
+    `body` and `clamped`. The model path (`crop_decide`) and the pixel-box override (`crop_override`) both call it, so
+    the same box gives the same focus either way. The box is grown to the window aspect, padded and kept in the frame."""
+    rect = geometry.expand(tight, body[0] / body[1], fit.src_w, fit.src_h)
+    focus = geometry.to_focus(fit.src_w, fit.src_h, body, rect, scale_range)
+    return {
+        "found": True, **base,
+        "box_px": [round(v, 1) for v in rect],
+        "box": {"left": round(tight[0] / fit.src_w, 4), "top": round(tight[1] / fit.src_h, 4),
+                "right": round(tight[2] / fit.src_w, 4), "bottom": round(tight[3] / fit.src_h, 4)},
+        "focus": {"scale": round(focus["scale"], 3), "x": round(focus["x"], 1), "y": round(focus["y"], 1)},
+        "body": list(body),
+        "clamped": focus["clamped"],
+    }
+
+
+def crop_override(tight, *, fit, body, scale_range, target, asset_id, t, want, policy, by, note, now=None):
+    """The AST-01 row for a pixel box someone gave (`jevm crop --box`); no model was asked. `tight` is
+    `(x0, y0, x1, y1)` in source px, already inside the frame. The row is `overridden`, resolved by `by` with its own
+    value, in the `agent` lane, with no `p`."""
+    entry = decision_policy(policy, DECISION)
+    value = focus_value(tight, fit=fit, body=body, scale_range=scale_range,
+                        base={"asset": asset_id, "t": t, "want": want or ""})
+    row = make_row(decision=DECISION, module=MODULE_ID, target=target, value=value, p=None, confidence=None, lane="agent",
+                   route_reasons=[], evidence=code_evidence(entry))
+    at = (now or datetime.now(timezone.utc)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    row["status"] = "overridden"
+    row["resolved"] = {"value": dict(value), "by": by, "at": at, "changed": True, "reviewed": True, "note": note or ""}
+    return row
 
 
 def crop_decide(answers, *, fit, body, scale_range, target, asset_id, t, want, policy):
@@ -91,29 +124,38 @@ def crop_decide(answers, *, fit, body, scale_range, target, asset_id, t, want, p
     tight = unfit_box(frac, fit)
     if tight[2] <= tight[0] or tight[3] <= tight[1]:
         return unusable(box_ans)
-    rect = geometry.expand(tight, body[0] / body[1], fit.src_w, fit.src_h)
-    focus = geometry.to_focus(fit.src_w, fit.src_h, body, rect, scale_range)
-    value = {
-        "found": True, **base,
-        "box_px": [round(v, 1) for v in rect],
-        "box": {"left": round(tight[0] / fit.src_w, 4), "top": round(tight[1] / fit.src_h, 4),
-                "right": round(tight[2] / fit.src_w, 4), "bottom": round(tight[3] / fit.src_h, 4)},
-        "focus": {"scale": round(focus["scale"], 3), "x": round(focus["x"], 1), "y": round(focus["y"], 1)},
-        "body": list(body),
-        "clamped": focus["clamped"],
-    }
+    value = focus_value(tight, fit=fit, body=body, scale_range=scale_range, base=base)
     return row(value, p, "above_auto" if p >= th["propose_at"] else "in_review_band", box_ans)
 
 
 def overlay(frame, row, fit, out):
     """Write `out`: the sent `frame` with the row's expanded rectangle in red, labelled with the scale and p. A row with
-    no box (not found, or no usable answer) gives the plain frame. `fit` maps the row's source px onto the sent frame."""
+    no box (not found, or no usable answer) gives the plain frame. `fit` maps the row's source px onto the sent frame.
+
+    An `overridden` row reads `AST-01 BOX S=... OVERRIDE` instead. When the value has a `focus` and `body`, the region the
+    viewer will see (what that focus shows of the source) is drawn too, in yellow and labelled VIEW, if it differs from the
+    red box by more than 2 px: that is how a `clamped` focus shows. A value with a `focus` but no `box_px` gets the VIEW
+    rectangle alone."""
     rects = []
     value = row["value"]
     if value.get("found"):
         pl, pt, pr, pb = fit.pad
         kx, ky = (fit.w - pl - pr) / fit.src_w, (fit.h - pt - pb) / fit.src_h
-        x0, y0, x1, y1 = value["box_px"]
-        label = f"{DECISION} S={value['focus']['scale']:.2f} P={row['p']:.2f}"
-        rects.append(((pl + x0 * kx, pt + y0 * ky, pl + x1 * kx, pt + y1 * ky), label))
+
+        def sent(r):
+            return pl + r[0] * kx, pt + r[1] * ky, pl + r[2] * kx, pt + r[3] * ky
+
+        override = row.get("status") == "overridden"
+        focus = value.get("focus")
+        scale = f" S={focus['scale']:.2f}" if focus else ""
+        box = value.get("box_px")
+        if box:
+            label = f"{DECISION} BOX{scale} OVERRIDE" if override else f"{DECISION}{scale} P={row['p']:.2f}"
+            rects.append((sent(box), label))
+        if focus and value.get("body"):
+            view = geometry.focus_rect(fit.src_w, fit.src_h, value["body"], focus["scale"], focus["x"], focus["y"])
+            if not box:
+                rects.append((sent(view), f"{DECISION} VIEW{scale} OVERRIDE"))
+            elif max(abs(a - b) for a, b in zip(view, box)) > 2:
+                rects.append((sent(view), "VIEW"))
     return draw_rects(frame, rects, out)

@@ -352,6 +352,179 @@ class CropTests(RunnerCase):
         self.assertEqual((row["lane"], row["value"]["found"]), ("agent", None))
 
 
+CROP_LINE = re.compile(r"^AST-01:(\S+): .*box_px \[[^\]]+\], focus \{scale [\d.]+, x [\d.]+, y [\d.]+\}, clamped (\S+), "
+                       r"lane agent.*; overlay (.+)$")
+
+
+class CropBoxTests(RunnerCase):
+    """`crop --box`: a pixel box on the source image (800x450 here), no model request."""
+    BOX = "240,135,560,315"  # what `respond` answers for the model path: (0.3, 0.3, 0.7, 0.7) of 800x450
+
+    def box_crop(self, beat="b1", box=BOX, **kwargs):
+        with mock.patch.object(runner, "make_client", side_effect=AssertionError("--box must not build a client")):
+            return call(runner.crop, self.spec_path, beat=beat, asset="a2", box=box, **kwargs)
+
+    def row(self, beat="b1"):
+        return next(r for r in self.decisions()["decisions"] if r["id"] == f"AST-01:{beat}")
+
+    def overlay_bytes(self, beat="b1"):
+        return (self.work / "crops" / f"{beat}.jpg").read_bytes()
+
+    def test_box_gives_the_same_focus_as_the_model_path_for_the_same_box(self):
+        self.assertEqual(call(runner.crop, self.spec_path, beat="m", asset="a2", want="x", client=self.client())[0], 0)
+        self.assertEqual(self.box_crop("b")[0], 0)
+        model, boxed = self.row("m")["value"], self.row("b")["value"]
+        for key in ("found", "box_px", "box", "focus", "body", "clamped"):
+            self.assertEqual(boxed[key], model[key], key)
+
+    def test_box_sends_no_request_and_writes_an_overridden_agent_row(self):
+        rc, out, _ = self.box_crop(note="tight on the card")
+        self.assertEqual(rc, 0)
+        row = self.row()
+        self.assertEqual((row["lane"], row["status"], row["p"], row["route_reasons"]), ("agent", "overridden", None, []))
+        self.assertEqual(row["evidence"]["backend"], "none")
+        self.assertEqual((row["value"]["found"], row["value"]["asset"], row["value"]["t"]), (True, "a2", None))
+        resolved = row["resolved"]
+        self.assertEqual((resolved["value"], resolved["by"], resolved["note"]), (row["value"], "agent", "tight on the card"))
+        self.assertRegex(resolved["at"], r"^\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ$")
+        self.assertEqual(self.decisions()["backends_used"]["jev"]["requests"], 0)
+        self.assertIn("no model request sent", out)
+
+    def test_box_by_human_and_a_rerun_replaces_the_row_and_its_note(self):
+        self.assertEqual(self.box_crop(note="first")[0], 0)
+        self.assertEqual(self.box_crop(note="second", by="human")[0], 0)
+        ids = [r["id"] for r in self.decisions()["decisions"]]
+        self.assertEqual(ids.count("AST-01:b1"), 1)
+        self.assertEqual((self.row()["resolved"]["by"], self.row()["resolved"]["note"]), ("human", "second"))
+
+    def test_box_redraws_the_overlay_after_a_model_crop(self):
+        call(runner.crop, self.spec_path, beat="b1", asset="a2", want="x", client=self.client())
+        before = self.overlay_bytes()
+        self.assertEqual(self.box_crop(box="100,50,200,100")[0], 0)
+        self.assertNotEqual(self.overlay_bytes(), before)
+        self.assertEqual(image_size(self.work / "crops" / "b1.jpg")[:2], (800, 450))
+
+    def test_box_prints_one_crop_line(self):
+        rc, out, _ = self.box_crop()
+        lines = [line for line in out.splitlines() if line.startswith("AST-01")]
+        self.assertEqual(len(lines), 1)
+        m = CROP_LINE.match(lines[0])
+        self.assertIsNotNone(m, lines[0])
+        self.assertEqual(m[3], str(self.work / "crops" / "b1.jpg"))
+        self.assertNotIn(" p ", lines[0])
+        focus = self.row()["value"]["focus"]
+        self.assertIn(f"focus {{scale {focus['scale']:.2f}, x {focus['x']}, y {focus['y']}}}", lines[0])
+
+    def test_model_crop_prints_p_box_focus_and_clamped(self):
+        rc, out, _ = call(runner.crop, self.spec_path, beat="b1", asset="a2", want="x", client=self.client())
+        [line] = [line for line in out.splitlines() if line.startswith("AST-01")]
+        self.assertRegex(line, r"^AST-01:b1: p 0\.\d\d, box_px \[")
+        self.assertIsNotNone(CROP_LINE.match(line), line)
+        self.assertNotIn("overridden", line)
+
+    def test_box_clamps_like_the_model_path(self):
+        self.assertEqual(self.box_crop("small", "395,220,405,230")[0], 0)   # far smaller than the scale cap allows
+        self.assertIn("scale", self.row("small")["value"]["clamped"])
+        self.assertEqual(self.row("small")["value"]["focus"]["scale"], 2.0)
+        self.assertEqual(self.box_crop("edge", "0,0,120,70")[0], 0)        # the window cannot centre on the corner
+        value = self.row("edge")["value"]
+        self.assertTrue({"x", "y"} & set(value["clamped"]), value["clamped"])
+        rc, out, _ = self.box_crop("edge", "0,0,120,70")
+        self.assertRegex(out, r"clamped [xy,scale]*[xy]")
+
+    def test_box_partly_outside_is_clipped_wholly_outside_is_rejected(self):
+        self.assertEqual(self.box_crop("clip", "600,300,2000,2000")[0], 0)
+        box = self.row("clip")["value"]["box"]
+        self.assertEqual((box["right"], box["bottom"]), (1.0, 1.0))
+        rc, _, err = self.box_crop("out", "900,10,1000,50")
+        self.assertEqual(rc, 2)
+        self.assertIn("outside the 800x450 source image", err)
+        self.assertNotIn("AST-01:out", [r["id"] for r in self.decisions()["decisions"]])
+
+    def test_bad_box_exits_2_with_one_line(self):
+        for bad in ("1,2,3", "a,b,c,d", "10,10,5,20", "5,5,5,9", "nan,0,10,10", "0,0,inf,10", "", "1,2,3,4,5"):
+            rc, _, err = self.box_crop(box=bad)
+            self.assertEqual(rc, 2, bad)
+            self.assertTrue(err.startswith("crop: --box"), (bad, err))
+            self.assertEqual(len(err.strip().splitlines()), 1)
+        self.assertFalse((self.work / "decisions.json").exists())
+
+    def test_want_is_optional_with_box_and_required_without(self):
+        self.assertEqual(self.box_crop()[0], 0)
+        self.assertEqual(self.row()["value"]["want"], "")
+        self.assertEqual(self.box_crop(want="the card")[0], 0)
+        self.assertEqual(self.row()["value"]["want"], "the card")
+        rc, _, err = call(runner.crop, self.spec_path, beat="b2", asset="a2", client=self.client())
+        self.assertEqual(rc, 2)
+        self.assertIn("--want", err)
+
+    def test_box_dry_run_has_nothing_to_estimate(self):
+        rc, out, _ = self.box_crop(dry_run=True)
+        self.assertEqual(rc, 0)
+        self.assertIn("nothing to estimate", out)
+        self.assertFalse((self.work / "decisions.json").exists())
+
+    def test_box_on_a_video_uses_the_native_frame(self):
+        (self.root / "raw").mkdir(exist_ok=True)
+        run_ffmpeg("-f", "lavfi", "-i", "testsrc=size=640x360:rate=10", "-t", "1", "-pix_fmt", "yuv420p",
+                   str(self.root / "raw" / "screen.mov"))
+        rc, _, err = call(runner.crop, self.spec_path, beat="v1", asset="a1", t=0.5, box="100,50,300,150")
+        self.assertEqual(rc, 0, err)
+        self.assertEqual(self.row("v1")["value"]["t"], 0.5)
+        rc, _, err = call(runner.crop, self.spec_path, beat="v2", asset="a1", t=0.5, box="700,10,800,50")
+        self.assertEqual((rc, "640x360" in err), (2, True))
+
+
+class ResolveRedrawTests(RunnerCase):
+    FOCUS = '{"found":true,"focus":{"scale":2.0,"x":300,"y":100}}'
+
+    def setUp(self):
+        super().setUp()
+        self.assertEqual(call(runner.crop, self.spec_path, beat="b1", asset="a2", want="x", client=self.client())[0], 0)
+        self.decisions_path = str(self.work / "decisions.json")
+        self.overlay = self.work / "crops" / "b1.jpg"
+
+    def resolve(self, *extra, ids="AST-01:b1"):
+        return call(jevm.main, ["resolve", self.decisions_path, ids, *extra, "--by", "agent"])
+
+    def test_resolve_value_with_a_focus_redraws_the_overlay(self):
+        before = self.overlay.read_bytes()
+        rc, out, _ = self.resolve("--value", self.FOCUS)
+        self.assertEqual(rc, 0)
+        self.assertNotEqual(self.overlay.read_bytes(), before)
+        self.assertIn("redrew", out)
+        self.assertEqual(image_size(self.overlay)[:2], (800, 450))
+
+    def test_resolve_value_with_a_box_px_redraws_the_overlay(self):
+        before = self.overlay.read_bytes()
+        rc, out, _ = self.resolve("--value", '{"found":true,"box_px":[10,10,200,150]}')
+        self.assertEqual(rc, 0)
+        self.assertNotEqual(self.overlay.read_bytes(), before)
+
+    def test_resolve_accept_other_rows_and_text_values_leave_the_overlay_alone(self):
+        before = self.overlay.read_bytes()
+        self.assertEqual(self.resolve("--accept")[0], 0)
+        rc, out, _ = self.resolve("--value", "looks fine")
+        self.assertEqual(rc, 0)
+        self.assertNotIn("redrew", out)
+        self.assertEqual(self.overlay.read_bytes(), before)
+
+    def test_resolve_without_the_source_frame_says_so_and_still_succeeds(self):
+        (self.work / "crops" / "src" / "b1.fit.json").unlink()
+        before = self.overlay.read_bytes()
+        rc, out, _ = self.resolve("--value", self.FOCUS)
+        self.assertEqual(rc, 0)
+        self.assertIn("no source frame", out)
+        self.assertEqual(len(out.strip().splitlines()), 2)  # the note and "resolved 1 row"
+        self.assertEqual(self.overlay.read_bytes(), before)
+        self.assertEqual(next(r for r in self.decisions()["decisions"] if r["id"] == "AST-01:b1")["status"], "overridden")
+
+    def test_resolve_with_a_malformed_focus_never_fails(self):
+        rc, out, _ = self.resolve("--value", '{"focus":{"scale":"big"}}')
+        self.assertEqual(rc, 0)
+        self.assertIn("not redrawn", out)
+
+
 class CliTests(unittest.TestCase):
     def run_main(self, argv):
         return call(jevm.main, argv)
@@ -401,8 +574,17 @@ class CliTests(unittest.TestCase):
             self.run_main(["crop", "s.json", "--beat", "b1", "--asset", "a2", "--t", "12.5", "--want", "the card",
                            "--body", "400x300", "--budget", "0.2", "--dry-run"])
         crop.assert_called_once_with("s.json", beat="b1", asset="a2", t=12.5, want="the card", body="400x300",
-                                     dry_run=True, no_jev=False, no_images=False, budget=0.2, kit_dir=None)
-        self.assertEqual(self.run_main(["crop", "s.json", "--beat", "b1"])[0], 2)  # --asset and --want are required
+                                     dry_run=True, no_jev=False, no_images=False, budget=0.2, kit_dir=None,
+                                     box=None, by="agent", note="")
+        self.assertEqual(self.run_main(["crop", "s.json", "--beat", "b1"])[0], 2)  # --asset is required
+
+    def test_cli_crop_passes_the_box_flags(self):
+        with mock.patch.object(runner, "crop", return_value=0) as crop:
+            self.run_main(["crop", "s.json", "--beat", "b1", "--asset", "a2", "--box", "1,2,30,40", "--by", "human",
+                           "--note", "tight"])
+        crop.assert_called_once_with("s.json", beat="b1", asset="a2", t=None, want=None, body=None, dry_run=False,
+                                     no_jev=False, no_images=False, budget=None, kit_dir=None, box="1,2,30,40",
+                                     by="human", note="tight")
 
     def test_cli_qa_and_resolve_pass_their_flags(self):
         with mock.patch.object(jevm.qa, "cli_qa", return_value=0) as cli:

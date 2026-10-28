@@ -3,9 +3,12 @@
 `plan` asks every selected module for its requests, sends them together through one client (one preflight, one
 budget), hands each module its own answers and merges the rows into `<project>/work/jevm/decisions.json`. A row someone
 resolved keeps its resolution while its value is unchanged. `crop` does the same for one focus crop and draws its
-overlay. The modules are pure; this file and `decisions_io` do all the writing.
+overlay; `crop --box` does the same from a pixel box without asking a model, and `redraw_overlays` redraws an overlay
+after `resolve --value`. The modules are pure; this file and `decisions_io` do all the writing.
 """
+import dataclasses
 import json
+import math
 import re
 import sys
 from collections import Counter
@@ -218,18 +221,69 @@ def _source_file(spec, record):
     return path
 
 
-def crop(spec_path, *, beat, asset, t=None, want, body=None, dry_run=False, no_jev=False, no_images=False, budget=None,
-         client=None, kit_dir=None):
+def _parse_box(text):
+    """`--box x0,y0,x1,y1` as four finite floats with x0 < x1 and y0 < y1. Raises `ValueError` with a one-line message."""
+    parts = str(text).split(",")
+    try:
+        x0, y0, x1, y1 = (float(v) for v in parts)
+    except ValueError:
+        raise ValueError(f"--box must be four numbers x0,y0,x1,y1 (pixels on the source image), not {text!r}") from None
+    if not all(math.isfinite(v) for v in (x0, y0, x1, y1)):
+        raise ValueError(f"--box must be four finite numbers, not {text!r}")
+    if x0 >= x1 or y0 >= y1:
+        raise ValueError(f"--box needs x0 < x1 and y0 < y1, not {text!r}")
+    return x0, y0, x1, y1
+
+
+def _clip_box(box, fit):
+    """`box` clipped to the `src_w x src_h` source image. A box that only partly leaves the image is clipped; one with
+    nothing inside it raises `ValueError`."""
+    x0, y0, x1, y1 = box
+    clipped = (max(x0, 0.0), max(y0, 0.0), min(x1, float(fit.src_w)), min(y1, float(fit.src_h)))
+    if clipped[0] >= clipped[2] or clipped[1] >= clipped[3]:
+        raise ValueError(f"--box {','.join(f'{v:g}' for v in box)} is outside the {fit.src_w}x{fit.src_h} source image")
+    return clipped
+
+
+def _fit_file(frame_dir, beat):
+    return Path(frame_dir) / f"{beat}.fit.json"
+
+
+def _crop_line(row, overlay):
+    """The one line `crop` prints: the row, what a model said (`p`), the box and focus it came to, and the overlay."""
+    value, parts = row["value"], [f"{row['id']}:"]
+    if row["status"] == "overridden":
+        parts.append(f"overridden by {row['resolved']['by']} (no model request sent),")
+    if row["p"] is not None:
+        parts.append(f"p {row['p']:.2f},")
+    if value.get("found"):
+        focus = value["focus"]
+        parts.append(f"box_px {value['box_px']}, focus {{scale {focus['scale']:.2f}, x {focus['x']}, y {focus['y']}}}, "
+                     f"clamped {','.join(value['clamped']) or 'none'},")
+    elif value.get("found") is False:
+        parts.append("not found,")
+    parts.append(f"lane {row['lane']}" + "".join(f", {r}" for r in row["route_reasons"]) + f"; overlay {overlay}")
+    return " ".join(parts)
+
+
+def crop(spec_path, *, beat, asset, t=None, want=None, body=None, dry_run=False, no_jev=False, no_images=False, budget=None,
+         client=None, kit_dir=None, box=None, by="agent", note=""):
     """`jevm crop SPEC --beat B --asset A [--t S] --want "..."`: one AST-01 row for beat `beat` in `decisions.json` and
     `crops/<beat>.jpg`, the sent frame with the proposed box over it. A video asset needs `t` (the second to cut the
-    frame at); `body` is `WxH`, else the kit's window body. Exit 0, 2 for bad input, 3 over budget (`dry_run` gives 0)."""
+    frame at); `body` is `WxH`, else the kit's window body. Exit 0, 2 for bad input, 3 over budget (`dry_run` gives 0).
+
+    With `box` (`"x0,y0,x1,y1"`, pixels on the source image, a video at its native size) no model is asked and `want` is
+    optional: the box goes through the same geometry as a model's, the row is `overridden` by `by` with `note`, and the
+    overlay is drawn from it. A box partly outside the image is clipped; one wholly outside, or not four numbers
+    with x0 < x1 and y0 < y1, exits 2. Either way the one-line result, with the focus, is printed."""
     spec_path = Path(spec_path)
     try:
         spec, manifest, manifest_sha, policy = load_context(spec_path, kit_dir)
         if _BEAT_ID.fullmatch(beat or "") is None:
             raise ValueError(f"--beat must be letters, digits, '.', '_' or '-', not {beat!r}")
-        if not (want or "").strip():
-            raise ValueError("--want must say what the crop has to show")
+        tight = _parse_box(box) if box is not None else None
+        if tight is None and not (want or "").strip():
+            raise ValueError("--want must say what the crop has to show (or pass --box x0,y0,x1,y1)")
         record = _asset(spec, asset)
         if record["kind"] not in _VIDEO_KINDS + _IMAGE_KINDS:
             raise ValueError(f"asset {asset} is a {record['kind']}; crop takes a video or an image")
@@ -242,29 +296,83 @@ def crop(spec_path, *, beat, asset, t=None, want, body=None, dry_run=False, no_j
         doc = _open_doc(spec, spec_path, manifest_sha, out_dir)
     except ValueError as exc:
         return _fail("crop", exc)
+    if tight is not None and dry_run:
+        print("crop: --box sends nothing, so there is nothing to estimate")
+        return 0
 
     t = float(t) if video else None
     try:
         target_frame = out_dir / "crops" / "src" / f"{beat}.jpg"
         sent, fit = images.frame_at(source, t, target_frame) if video else images.fit_for_jev(source, target_frame)
+        _fit_file(target_frame.parent, beat).write_text(json.dumps(dataclasses.asdict(fit)), encoding="utf-8")
     except (OSError, RuntimeError, ValueError) as exc:
         return _fail("crop", f"cannot prepare a frame from {source}: {exc}")
 
-    reqs = assets.crop_requests(sent, want, record.get("sensitivity", "private"))
-    if client is None:
-        client = make_client(spec.get("decide"), cache_dir=cache_dir(spec), no_jev=no_jev, no_images=no_images)
-    stop = client.preflight(reqs, budget_usd=_budget(spec, budget), dry_run=dry_run)
-    if stop is not None:
-        return stop
-
-    row = assets.crop_decide(client.run_many(reqs), fit=fit, body=body_px, scale_range=manifest["rules"]["focus_scale"],
-                             target={"kind": "beat", "id": beat}, asset_id=record["id"], t=t, want=want, policy=policy)
+    target = {"kind": "beat", "id": beat}
+    if tight is not None:
+        try:
+            row = assets.crop_override(_clip_box(tight, fit), fit=fit, body=body_px, scale_range=manifest["rules"]["focus_scale"],
+                                       target=target, asset_id=record["id"], t=t, want=want, policy=policy, by=by, note=note)
+        except ValueError as exc:
+            return _fail("crop", exc)
+    else:
+        reqs = assets.crop_requests(sent, want, record.get("sensitivity", "private"))
+        if client is None:
+            client = make_client(spec.get("decide"), cache_dir=cache_dir(spec), no_jev=no_jev, no_images=no_images)
+        stop = client.preflight(reqs, budget_usd=_budget(spec, budget), dry_run=dry_run)
+        if stop is not None:
+            return stop
+        row = assets.crop_decide(client.run_many(reqs), fit=fit, body=body_px, scale_range=manifest["rules"]["focus_scale"],
+                                 target=target, asset_id=record["id"], t=t, want=want, policy=policy)
     try:
         overlay = assets.overlay(sent, row, fit, out_dir / "crops" / f"{beat}.jpg")
     except (OSError, RuntimeError, ValueError) as exc:
         return _fail("crop", f"cannot draw the overlay: {exc}")
     decisions_io.merge(doc, [row], ids={row["id"]})
-    decisions_io.set_backends(doc, client.ledger.to_dict())
+    if tight is not None:
+        # merge keeps an old resolution when the value is unchanged; a new --box call carries its own by and note
+        next(r for r in doc["decisions"] if r["id"] == row["id"]).update(status=row["status"], resolved=row["resolved"])
+    else:
+        decisions_io.set_backends(doc, client.ledger.to_dict())
     decisions_io.write(doc, policy, out_dir)
-    print(f"{row['id']}: lane {row['lane']}, {', '.join(row['route_reasons'])}; overlay {overlay}")
+    print(_crop_line(row, overlay))
     return 0
+
+
+def redraw_overlays(decisions_path, ids):
+    """After `resolve --value`: redraw `crops/<beat>.jpg` for each of `ids` that is an overridden AST-01 row whose resolved
+    value has a `focus` and/or `box_px`, from that value (the VIEW rectangle needs a `body`, else the row's own is used).
+    It needs the frame `crop` saved beside `decisions.json` (`crops/src/<beat>.jpg` and `.fit.json`); without it, or on any
+    trouble drawing, it prints a one-line note and goes on. It never raises: the resolve it follows has already succeeded."""
+    path = Path(decisions_path)
+    try:
+        doc = decisions_io.load(path)
+    except ValueError:
+        return
+    for row in (doc or {}).get("decisions", []):
+        value = (row.get("resolved") or {}).get("value")
+        if (row.get("id") not in ids or row.get("decision") != "AST-01" or row.get("status") != "overridden"
+                or not isinstance(value, dict) or not (value.get("focus") or value.get("box_px"))):
+            continue
+        beat = row["target"]["id"]
+        src_dir = path.parent / "crops" / "src"
+        try:
+            fit_data = json.loads(_fit_file(src_dir, beat).read_text(encoding="utf-8"))
+            fit = images.Fit(**{**fit_data, "pad": tuple(fit_data["pad"])})
+            frame = src_dir / f"{beat}.jpg"
+            if not frame.is_file():
+                raise OSError("no frame")
+        except (OSError, ValueError, KeyError, TypeError):
+            print(f"resolve: {row['id']}: no source frame beside {path.name} (crops/src/{beat}.jpg), overlay not redrawn")
+            continue
+        body = value.get("body") or (row.get("value") or {}).get("body")
+        if not body and not value.get("box_px"):
+            print(f"resolve: {row['id']}: a focus with no body (and no box_px) cannot be drawn, overlay not redrawn")
+            continue
+        shown = {"status": "overridden", "p": None, "value": {**value, "found": True, "body": body}}
+        try:
+            out = assets.overlay(frame, shown, fit, path.parent / "crops" / f"{beat}.jpg")
+        except (OSError, RuntimeError, ValueError, KeyError, TypeError, ZeroDivisionError) as exc:
+            print(f"resolve: {row['id']}: overlay not redrawn ({exc})")
+            continue
+        print(f"redrew {out} from the resolved value")
