@@ -35,7 +35,13 @@ python3 -m unittest discover -s tests -t . -q
 
 You already build HyperFrames videos in a project with Claude Code or Codex, and want your agent to call `jevm` as a tool. Set it up once per machine, then once per project.
 
-1. **Get it once**, to a fixed place outside your project. There is no install step: it needs Python 3.15 or newer (`jevm.py` exits 2 below it) plus `ffmpeg` and `ffprobe` on your `PATH`.
+1. **Get it once**, to a fixed place outside your project. There is no install step: it needs Python 3.15 or newer plus `ffmpeg` and `ffprobe` on your `PATH`. First check the version:
+
+   ```bash
+   python3 --version
+   ```
+
+   It must show 3.15 or newer (`jevm.py` exits 2 below it). If it is older, install a newer Python; there is no other workaround. Then clone:
 
    ```bash
    git clone https://github.com/ankshvayt/jev-motion ~/tools/jev-motion
@@ -128,22 +134,22 @@ You already build HyperFrames videos in a project with Claude Code or Codex, and
 
    Pass the file with `--assets assets.json` to `spec build` (step 6 shows the full line). The assets are copied into `spec.json`, so after you change `assets.json`, rebuild the spec.
 
-6. **Tell the agent.** Edit the block below for each project before pasting it: the kit path, the words path, `--format` (`short` is vertical 9:16, `long` is horizontal 16:9) and the assets file. Paste it into `CLAUDE.md` (Claude Code) or `AGENTS.md` (Codex), after the step 1 setup:
+6. **Tell the agent.** Edit the block below for each project before pasting it. Placeholders: `<KIT_DIR>` your kit folder (e.g. `jevm-kit`), `<WORDS>` the transcript file (e.g. `transcript.json`), `<ASSETS>` the asset list (e.g. `assets.json`), `<short|long>` the format (`short` is vertical 9:16, `long` is horizontal 16:9), `<AUDIO>` the voiceover or video file you transcribe. Paste it into `CLAUDE.md` (Claude Code) or `AGENTS.md` (Codex), after the step 1 setup:
 
    ```markdown
    ## jevm (bounded video-build decisions)
    `jevm` is on PATH. Run it from the project root so .env is found.
-   Kit: ./jevm-kit. Words: ./transcript.json (written by `npx hyperframes transcribe <audio-or-video> -d .` from the project root; without `-d` it lands next to the input file). Assets: ./assets.json. Format: `short` or `long`.
+   Kit: ./<KIT_DIR>. Words: ./<WORDS> (written by `npx hyperframes transcribe <AUDIO> -d .` from the project root; without `-d` it lands next to the input file). Assets: ./<ASSETS>. Format: <short|long>.
 
    Loop, for each video:
-   1. `jevm kit check --kit-dir jevm-kit`
-   2. `jevm spec build --project . --format short --words transcript.json --assets assets.json --kit-dir jevm-kit`, then `jevm spec validate work/jevm/spec.json --kit-dir jevm-kit`. Rebuild the spec after changing assets.json, the words or the kit manifest.
+   1. `jevm kit check --kit-dir <KIT_DIR>`
+   2. `jevm spec build --project . --format <short|long> --words <WORDS> --assets <ASSETS> --kit-dir <KIT_DIR>`, then `jevm spec validate work/jevm/spec.json --kit-dir <KIT_DIR>`. Rebuild the spec after changing the assets, the words or the kit manifest.
    3. `jevm plan work/jevm/spec.json --dry-run` to see the cost, then `jevm plan work/jevm/spec.json`
-   4. Read `work/jevm/decisions.md`. Resolve `agent` lane rows yourself: `jevm resolve work/jevm/decisions.json ID --accept --by agent` (or `--value V`).
+   4. Read `work/jevm/decisions.md`. Resolve `agent` lane rows yourself, several ids in one call if you like: `jevm resolve work/jevm/decisions.json CAP-02:cg0,CAP-02:cg1 --accept --by agent --note "hook line"` (or `--value V`).
    5. Send me every `human` lane row in ONE message and wait for my answer. Then `jevm resolve ... --by human`. The stat check (STY-06) also flags sentences with number words like "one click"; if I say a flagged sentence is not a stat, resolve it with `jevm resolve work/jevm/decisions.json STY-06:ID --value '{"class":"opinion"}' --by human`.
-   6. For each window focus shot: `jevm crop work/jevm/spec.json --beat B --asset A --want "what to focus on"` (add `--t SECONDS` for a video asset). `B` is any short name you choose (e.g. `b1`, `sort-button`); it becomes the row `AST-01:B` and the overlay `work/jevm/crops/B.jpg`. `A` is an `id` from assets.json. `--want` must describe ONE region: for two unrelated targets (a button top-right and a column mid-page) run two crops with two beat names. Look at the overlay it writes, not the source.
+   6. For each window focus shot: `jevm crop work/jevm/spec.json --beat B --asset A --want "what to focus on"` (add `--t SECONDS` for a video asset). `B` is any short name you choose (e.g. `b1`, `sort-button`); it becomes the row `AST-01:B` and the overlay `work/jevm/crops/B.jpg`. `A` is an `id` from <ASSETS>. `--want` must describe ONE region: for two unrelated targets (a button top-right and a column mid-page) run two crops with two beat names. Always look at the overlay: `p` is only confidence that the target is present, not box accuracy. If the box is wrong, re-run with a sharper, more specific `--want` (a new request; the same `--want` is answered from cache), then override: `jevm resolve work/jevm/decisions.json AST-01:B --by agent --value '{"found":true,"focus":{"scale":2.0,"x":820,"y":90}}'`. Crop rows are `agent` lane: `--accept` or override each before you build.
    7. Build the composition from the resolved rows, then render.
-   8. `jevm qa RENDER.mp4 --spec work/jevm/spec.json`, then look at `work/jevm/qa/<render-stem>/flagged.jpg` (written when frames are flagged).
+   8. Short only: `jevm qa RENDER.mp4 --spec work/jevm/spec.json`, then look at `work/jevm/qa/<render-stem>/flagged.jpg` (written when frames are flagged). `qa` exits 2 on a `long` spec, so skip it there.
 
    Rules:
    - jevm never edits the composition. You do.
@@ -151,6 +157,18 @@ You already build HyperFrames videos in a project with Claude Code or Codex, and
    - Each run is capped by the budget in `work/jevm/spec.json` (`decide.budget_usd`; `spec build` sets it to $0.10 for `short` and $1.00 for `long`). `--budget USD` overrides it for one run; exit 3 means over budget. Use `--no-jev` to send nothing to TypeSafe, `--no-images` to send no images.
    - Never print or commit `.env` or the key.
    ```
+
+   **When a crop is wrong.** In `crop` output and on the overlay, `p` is the model's confidence that the target is present in the frame (the `vis` answer). It says nothing about how tight or correct the box is, so a box can be clearly off at p 0.98. `S=2.00` on the overlay is the focus scale, which the kit's `rules.focus_scale` may cap; when it, or the window's edges, forced a change the row's `clamped` lists what moved (`scale`, `x`, `y`; empty means none), so the window does not show exactly the box. Then, in order:
+
+   - **Re-ask with a sharper `--want`**: one region, named by visible text or position, e.g. `--want "the blue Sort button, top right"`. A different `--want` is a new request and costs one; the same `--want` (and the same `--t`) on the same file is answered from the cache for free, with the same box. A different `--t` cuts a different frame, so it is a new request too. There is no flag to bypass the cache. Re-using the beat name replaces that beat's row and overlay.
+   - **Still wrong: override the numbers.** What the build uses is `found` and `focus`: `scale`, and `x`, `y` (the zoom origin in window-body pixels). `box_px`, `box`, `body` and `clamped` only describe the proposal; leave them out. Copy the row's `focus` if it has one, nudge it, and resolve with the minimal JSON:
+
+     ```bash
+     jevm resolve work/jevm/decisions.json AST-01:sort-button --by agent --note "box was on the table, not the button" \
+       --value '{"found":true,"focus":{"scale":2.0,"x":820,"y":90}}'
+     ```
+
+   - **Then resolve it.** Crop rows sit in the `agent` lane and are never applied automatically: either `--accept` the proposed row or override it as above, before the build.
 
    Spend, in short: the budget is per run (each `plan`, `crop` or `qa` compares its own estimate against it, not a running total). To change the default for a project, edit `decide.budget_usd` in `work/jevm/spec.json`, or pass `--budget USD`; `spec build` writes the default again on every rebuild, so an edit in `spec.json` does not survive a rebuild.
 
