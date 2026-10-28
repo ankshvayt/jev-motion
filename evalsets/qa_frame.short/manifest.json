@@ -1,0 +1,119 @@
+{
+ "note": "Synthetic: flat-colour mock-ups of a vertical Short, 8 clean frames and 2 planted defects per type.",
+ "context": "A frame from a vertical Short in a dark slate style: a talking-head speaker, app windows inside light frames, word-by-word captions in the lower third, and sky blue used only to highlight one or two words of text.",
+ "negatives": [
+  {
+   "file": "neg/neg_t0.0.png",
+   "t": 0.0
+  },
+  {
+   "file": "neg/neg_t1.5.png",
+   "t": 1.5
+  },
+  {
+   "file": "neg/neg_t3.0.png",
+   "t": 3.0
+  },
+  {
+   "file": "neg/neg_t4.5.png",
+   "t": 4.5
+  },
+  {
+   "file": "neg/neg_t6.0.png",
+   "t": 6.0
+  },
+  {
+   "file": "neg/neg_t7.5.png",
+   "t": 7.5
+  },
+  {
+   "file": "neg/neg_t9.0.png",
+   "t": 9.0
+  },
+  {
+   "file": "neg/neg_t10.5.png",
+   "t": 10.5
+  }
+ ],
+ "positives": [
+  {
+   "id": "text_occluded_01_t1.5",
+   "type": "text_occluded",
+   "source_t": 1.5,
+   "file": "pos/text_occluded_01_t1.5.png"
+  },
+  {
+   "id": "text_occluded_02_t3.0",
+   "type": "text_occluded",
+   "source_t": 3.0,
+   "file": "pos/text_occluded_02_t3.0.png"
+  },
+  {
+   "id": "cut_off_edge_01_t4.5",
+   "type": "cut_off_edge",
+   "source_t": 4.5,
+   "file": "pos/cut_off_edge_01_t4.5.png"
+  },
+  {
+   "id": "cut_off_edge_02_t6.0",
+   "type": "cut_off_edge",
+   "source_t": 6.0,
+   "file": "pos/cut_off_edge_02_t6.0.png"
+  },
+  {
+   "id": "caption_on_face_01_t7.5",
+   "type": "caption_on_face",
+   "source_t": 7.5,
+   "file": "pos/caption_on_face_01_t7.5.png"
+  },
+  {
+   "id": "caption_on_face_02_t9.0",
+   "type": "caption_on_face",
+   "source_t": 9.0,
+   "file": "pos/caption_on_face_02_t9.0.png"
+  },
+  {
+   "id": "empty_region_01_t10.5",
+   "type": "empty_region",
+   "source_t": 10.5,
+   "file": "pos/empty_region_01_t10.5.png"
+  },
+  {
+   "id": "empty_region_02_t12.0",
+   "type": "empty_region",
+   "source_t": 12.0,
+   "file": "pos/empty_region_02_t12.0.png"
+  },
+  {
+   "id": "overlapping_panels_01_t13.5",
+   "type": "overlapping_panels",
+   "source_t": 13.5,
+   "file": "pos/overlapping_panels_01_t13.5.png"
+  },
+  {
+   "id": "overlapping_panels_02_t15.0",
+   "type": "overlapping_panels",
+   "source_t": 15.0,
+   "file": "pos/overlapping_panels_02_t15.0.png"
+  },
+  {
+   "id": "overlay_on_controls_01_t16.5",
+   "type": "overlay_on_controls",
+   "source_t": 16.5,
+   "file": "pos/overlay_on_controls_01_t16.5.png"
+  },
+  {
+   "id": "overlay_on_controls_02_t18.0",
+   "type": "overlay_on_controls",
+   "source_t": 18.0,
+   "file": "pos/overlay_on_controls_02_t18.0.png"
+  }
+ ],
+ "gates": {
+  "own_flagged_min": 8,
+  "clean_flagged_max": 4
+ },
+ "local_reference": {
+  "clean_flagged": 6
+ }
+}

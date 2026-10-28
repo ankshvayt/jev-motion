@@ -1,0 +1,159 @@
+{
+ "name": "set-a",
+ "note": "Synthetic caption groups with one author's hand highlights.",
+ "transcript": "Here are three quick tips to tidy up your inbox. First, turn on smart filters so newsletters skip the inbox. This tool saves 3 hours a week on sorting mail by hand. Second, set one reply template for the questions you answer daily. Third, archive everything older than thirty days in one click. That is it for today. Follow for more quick tips.",
+ "groups": [
+  {
+   "text": "Here are three quick tips",
+   "words": [
+    "Here",
+    "are",
+    "three",
+    "quick",
+    "tips"
+   ]
+  },
+  {
+   "text": "to tidy up your inbox.",
+   "words": [
+    "to",
+    "tidy",
+    "up",
+    "your",
+    "inbox."
+   ]
+  },
+  {
+   "text": "First, turn on smart filters",
+   "words": [
+    "First,",
+    "turn",
+    "on",
+    "smart",
+    "filters"
+   ]
+  },
+  {
+   "text": "so newsletters skip the inbox.",
+   "words": [
+    "so",
+    "newsletters",
+    "skip",
+    "the",
+    "inbox."
+   ]
+  },
+  {
+   "text": "This tool saves 3 hours a week",
+   "words": [
+    "This",
+    "tool",
+    "saves",
+    "3",
+    "hours",
+    "a",
+    "week"
+   ]
+  },
+  {
+   "text": "on sorting mail by hand.",
+   "words": [
+    "on",
+    "sorting",
+    "mail",
+    "by",
+    "hand."
+   ]
+  },
+  {
+   "text": "Second, set one reply template",
+   "words": [
+    "Second,",
+    "set",
+    "one",
+    "reply",
+    "template"
+   ]
+  },
+  {
+   "text": "for the questions you answer daily.",
+   "words": [
+    "for",
+    "the",
+    "questions",
+    "you",
+    "answer",
+    "daily."
+   ]
+  },
+  {
+   "text": "Third, archive everything older",
+   "words": [
+    "Third,",
+    "archive",
+    "everything",
+    "older"
+   ]
+  },
+  {
+   "text": "than thirty days in one click.",
+   "words": [
+    "than",
+    "thirty",
+    "days",
+    "in",
+    "one",
+    "click."
+   ]
+  },
+  {
+   "text": "That is it for today.",
+   "words": [
+    "That",
+    "is",
+    "it",
+    "for",
+    "today."
+   ]
+  },
+  {
+   "text": "Follow for more quick tips.",
+   "words": [
+    "Follow",
+    "for",
+    "more",
+    "quick",
+    "tips."
+   ]
+  }
+ ],
+ "hand": [
+  null,
+  null,
+  [
+   3,
+   4
+  ],
+  null,
+  [
+   3,
+   4
+  ],
+  null,
+  [
+   3,
+   4
+  ],
+  null,
+  null,
+  [
+   4,
+   5
+  ],
+  null,
+  null
+ ],
+ "gates": {
+  "precision_at_k_min": 0.5
+ }
+}

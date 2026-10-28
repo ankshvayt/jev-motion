@@ -1,0 +1,911 @@
+{
+ "source": "Scripted for the synthetic eval sets by evalsets/make_synthetic.py; not model output.",
+ "records": [
+  {
+   "groups": [
+    "Here are three quick tips",
+    "to tidy up your inbox.",
+    "First, turn on smart filters",
+    "so newsletters skip the inbox."
+   ],
+   "answers": {
+    "need_0": {
+     "type": "noul",
+     "noul": 0.45
+    },
+    "need2_0": {
+     "type": "noul",
+     "noul": 0.4
+    },
+    "pick_0": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_1": {
+     "type": "noul",
+     "noul": 0.2
+    },
+    "need2_1": {
+     "type": "noul",
+     "noul": 0.15
+    },
+    "pick_1": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_2": {
+     "type": "noul",
+     "noul": 0.9
+    },
+    "need2_2": {
+     "type": "noul",
+     "noul": 0.85
+    },
+    "pick_2": {
+     "type": "choice",
+     "choice": "h10",
+     "confidence": 0.62,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.0,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.62,
+      "h11": 0.0,
+      "none": 0.17
+     }
+    },
+    "need_3": {
+     "type": "noul",
+     "noul": 0.26
+    },
+    "need2_3": {
+     "type": "noul",
+     "noul": 0.21
+    },
+    "pick_3": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    }
+   }
+  },
+  {
+   "groups": [
+    "This tool saves 3 hours a week",
+    "on sorting mail by hand.",
+    "Second, set one reply template",
+    "for the questions you answer daily."
+   ],
+   "answers": {
+    "need_0": {
+     "type": "noul",
+     "noul": 0.97
+    },
+    "need2_0": {
+     "type": "noul",
+     "noul": 0.92
+    },
+    "pick_0": {
+     "type": "choice",
+     "choice": "h10",
+     "confidence": 0.62,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.0,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.62,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "h15": 0.0,
+      "h16": 0.0,
+      "h17": 0.0,
+      "none": 0.17
+     }
+    },
+    "need_1": {
+     "type": "noul",
+     "noul": 0.2
+    },
+    "need2_1": {
+     "type": "noul",
+     "noul": 0.15
+    },
+    "pick_1": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_2": {
+     "type": "noul",
+     "noul": 0.71
+    },
+    "need2_2": {
+     "type": "noul",
+     "noul": 0.66
+    },
+    "pick_2": {
+     "type": "choice",
+     "choice": "h10",
+     "confidence": 0.62,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.0,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.62,
+      "h11": 0.0,
+      "none": 0.17
+     }
+    },
+    "need_3": {
+     "type": "noul",
+     "noul": 0.85
+    },
+    "need2_3": {
+     "type": "noul",
+     "noul": 0.8
+    },
+    "pick_3": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "none": 0.38
+     }
+    }
+   }
+  },
+  {
+   "groups": [
+    "Third, archive everything older",
+    "than thirty days in one click.",
+    "That is it for today.",
+    "Follow for more quick tips."
+   ],
+   "answers": {
+    "need_0": {
+     "type": "noul",
+     "noul": 0.17
+    },
+    "need2_0": {
+     "type": "noul",
+     "noul": 0.12
+    },
+    "pick_0": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_1": {
+     "type": "noul",
+     "noul": 0.76
+    },
+    "need2_1": {
+     "type": "noul",
+     "noul": 0.71
+    },
+    "pick_1": {
+     "type": "choice",
+     "choice": "h13",
+     "confidence": 0.62,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.0,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.62,
+      "h14": 0.0,
+      "none": 0.17
+     }
+    },
+    "need_2": {
+     "type": "noul",
+     "noul": 0.23
+    },
+    "need2_2": {
+     "type": "noul",
+     "noul": 0.18
+    },
+    "pick_2": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_3": {
+     "type": "noul",
+     "noul": 0.26
+    },
+    "need2_3": {
+     "type": "noul",
+     "noul": 0.21
+    },
+    "pick_3": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    }
+   }
+  },
+  {
+   "groups": [
+    "Let me show you the export flow.",
+    "Open the report you want to share,",
+    "then click the share button",
+    "in the top right corner."
+   ],
+   "answers": {
+    "need_0": {
+     "type": "noul",
+     "noul": 0.17
+    },
+    "need2_0": {
+     "type": "noul",
+     "noul": 0.12
+    },
+    "pick_0": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "h15": 0.0,
+      "h16": 0.0,
+      "h17": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_1": {
+     "type": "noul",
+     "noul": 0.2
+    },
+    "need2_1": {
+     "type": "noul",
+     "noul": 0.15
+    },
+    "pick_1": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "h15": 0.0,
+      "h16": 0.0,
+      "h17": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_2": {
+     "type": "noul",
+     "noul": 0.6
+    },
+    "need2_2": {
+     "type": "noul",
+     "noul": 0.55
+    },
+    "pick_2": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_3": {
+     "type": "noul",
+     "noul": 0.26
+    },
+    "need2_3": {
+     "type": "noul",
+     "noul": 0.21
+    },
+    "pick_3": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    }
+   }
+  },
+  {
+   "groups": [
+    "Pick PDF from the format menu.",
+    "The whole export takes five seconds",
+    "even for a fifty page report.",
+    "You can also schedule it"
+   ],
+   "answers": {
+    "need_0": {
+     "type": "noul",
+     "noul": 0.17
+    },
+    "need2_0": {
+     "type": "noul",
+     "noul": 0.12
+    },
+    "pick_0": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_1": {
+     "type": "noul",
+     "noul": 0.95
+    },
+    "need2_1": {
+     "type": "noul",
+     "noul": 0.9
+    },
+    "pick_1": {
+     "type": "choice",
+     "choice": "h13",
+     "confidence": 0.62,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.0,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.62,
+      "h14": 0.0,
+      "none": 0.17
+     }
+    },
+    "need_2": {
+     "type": "noul",
+     "noul": 0.65
+    },
+    "need2_2": {
+     "type": "noul",
+     "noul": 0.6
+    },
+    "pick_2": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_3": {
+     "type": "noul",
+     "noul": 0.26
+    },
+    "need2_3": {
+     "type": "noul",
+     "noul": 0.21
+    },
+    "pick_3": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    }
+   }
+  },
+  {
+   "groups": [
+    "to send every Monday morning.",
+    "Add the people who should get it,",
+    "write a short note,",
+    "and press save."
+   ],
+   "answers": {
+    "need_0": {
+     "type": "noul",
+     "noul": 0.83
+    },
+    "need2_0": {
+     "type": "noul",
+     "noul": 0.78
+    },
+    "pick_0": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_1": {
+     "type": "noul",
+     "noul": 0.2
+    },
+    "need2_1": {
+     "type": "noul",
+     "noul": 0.15
+    },
+    "pick_1": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "h15": 0.0,
+      "h16": 0.0,
+      "h17": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_2": {
+     "type": "noul",
+     "noul": 0.23
+    },
+    "need2_2": {
+     "type": "noul",
+     "noul": 0.18
+    },
+    "pick_2": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_3": {
+     "type": "noul",
+     "noul": 0.26
+    },
+    "need2_3": {
+     "type": "noul",
+     "noul": 0.21
+    },
+    "pick_3": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "none": 0.38
+     }
+    }
+   }
+  },
+  {
+   "groups": [
+    "Now the report arrives on its own",
+    "and nobody has to ask for it.",
+    "Try it on your next report",
+    "and see how much time it frees up."
+   ],
+   "answers": {
+    "need_0": {
+     "type": "noul",
+     "noul": 0.79
+    },
+    "need2_0": {
+     "type": "noul",
+     "noul": 0.74
+    },
+    "pick_0": {
+     "type": "choice",
+     "choice": "h14",
+     "confidence": 0.62,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.0,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.62,
+      "h15": 0.0,
+      "h16": 0.0,
+      "h17": 0.0,
+      "none": 0.17
+     }
+    },
+    "need_1": {
+     "type": "noul",
+     "noul": 0.2
+    },
+    "need2_1": {
+     "type": "noul",
+     "noul": 0.15
+    },
+    "pick_1": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "h15": 0.0,
+      "h16": 0.0,
+      "h17": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_2": {
+     "type": "noul",
+     "noul": 0.23
+    },
+    "need2_2": {
+     "type": "noul",
+     "noul": 0.18
+    },
+    "pick_2": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "none": 0.38
+     }
+    },
+    "need_3": {
+     "type": "noul",
+     "noul": 0.26
+    },
+    "need2_3": {
+     "type": "noul",
+     "noul": 0.21
+    },
+    "pick_3": {
+     "type": "choice",
+     "choice": "h1",
+     "confidence": 0.41,
+     "probabilities": {
+      "h0": 0.21,
+      "h1": 0.41,
+      "h2": 0.0,
+      "h3": 0.0,
+      "h4": 0.0,
+      "h5": 0.0,
+      "h6": 0.0,
+      "h7": 0.0,
+      "h8": 0.0,
+      "h9": 0.0,
+      "h10": 0.0,
+      "h11": 0.0,
+      "h12": 0.0,
+      "h13": 0.0,
+      "h14": 0.0,
+      "h15": 0.0,
+      "h16": 0.0,
+      "h17": 0.0,
+      "h18": 0.0,
+      "h19": 0.0,
+      "h20": 0.0,
+      "none": 0.38
+     }
+    }
+   }
+  }
+ ],
+ "missing": 0
+}

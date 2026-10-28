@@ -1,0 +1,8 @@
+{"policy": "default@1", "review_band": 0.10, "module_not_helping": 0.40,
+ "decisions": {
+  "CAP-02": {"lane": "budget", "can_auto": true, "evidence": {"label": "Default", "ref": "docs/question-sets.md"}},
+  "CAP-03": {"lane": "order_agree", "can_auto": true, "evidence": {"label": "Default", "ref": "docs/question-sets.md"}},
+  "STY-06": {"lane": "noul_bands", "can_auto": false, "evidence": {"label": "Default", "ref": "docs/question-sets.md"}},
+  "QA-05": {"lane": "human", "can_auto": false, "evidence": {"label": "Default", "ref": "docs/never-auto.md"}},
+  "AST-01": {"lane": "agent", "can_auto": false, "evidence": {"label": "Default", "ref": "docs/question-sets.md"}},
+  "QA-01": {"lane": "agent", "can_auto": false, "evidence": {"label": "Default", "ref": "docs/question-sets.md"}}}}

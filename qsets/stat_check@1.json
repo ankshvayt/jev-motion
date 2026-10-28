@@ -1,0 +1,45 @@
+{
+  "id": "stat_check",
+  "version": 1,
+  "route": "local",
+  "backend": "local",
+  "models": {
+    "jev": "jev-1.13.0",
+    "local": "pplx-decider-flash-v1.2"
+  },
+  "thresholds": {
+    "jev": {
+      "has_number": 0.5,
+      "opinion_below": 0.3,
+      "source_at": 0.7
+    },
+    "local": {
+      "has_number": 0.5,
+      "opinion_below": 0.3,
+      "source_at": 0.7
+    }
+  },
+  "calibrated": {
+    "local": {
+      "app_version": "0.1.0",
+      "model": "pplx-decider-flash-v1.2"
+    }
+  },
+  "order_check": false,
+  "batch": null,
+  "evidence": {
+    "label": "Default",
+    "ref": "docs/question-sets.md"
+  },
+  "notes": "The local thresholds copy Jev's. Check them with `jevm eval --backend local --qset stat_check` before relying on them.",
+  "questions": {
+    "has_number": {
+      "type": "noul",
+      "instructions": "Does the beat state a number or a measurable claim in the spoken words `scene.words`?"
+    },
+    "stat_is_measured": {
+      "type": "noul",
+      "instructions": "Is the number in the spoken words `scene.words` a measured or sourced figure, rather than an opinion or a figure of speech such as '100x better'?"
+    }
+  }
+}

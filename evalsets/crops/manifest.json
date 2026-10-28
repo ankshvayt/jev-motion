@@ -1,0 +1,99 @@
+{
+ "note": "Synthetic app mock-ups. hand is one author's crop in source px; want was written before scoring.",
+ "focus_scale": [
+  1.25,
+  2.0
+ ],
+ "cases": [
+  {
+   "id": "c1-settings",
+   "frame": "frames/c1-settings.png",
+   "t": 0.0,
+   "want": "the settings panel with the toggle list and the blue save button",
+   "body": [
+    920,
+    760
+   ],
+   "src_size": [
+    640,
+    360
+   ],
+   "hand": [
+    276.0,
+    29.0,
+    640,
+    342.2
+   ],
+   "absent_want_of": "c2-chart"
+  },
+  {
+   "id": "c2-chart",
+   "frame": "frames/c2-chart.png",
+   "t": 0.0,
+   "want": "the line chart card with its legend",
+   "body": [
+    920,
+    760
+   ],
+   "src_size": [
+    640,
+    360
+   ],
+   "hand": [
+    29.2,
+    0.0,
+    400.4,
+    297.4
+   ],
+   "absent_want_of": "c3-table"
+  },
+  {
+   "id": "c3-table",
+   "frame": "frames/c3-table.png",
+   "t": 0.0,
+   "want": "the invoice table with the total row",
+   "body": [
+    920,
+    760
+   ],
+   "src_size": [
+    640,
+    360
+   ],
+   "hand": [
+    129.5,
+    0.0,
+    565.3,
+    349.2
+   ],
+   "absent_want_of": "c4-sidebar"
+  },
+  {
+   "id": "c4-sidebar",
+   "frame": "frames/c4-sidebar.png",
+   "t": 0.0,
+   "want": "the left sidebar with the folder list",
+   "body": [
+    920,
+    760
+   ],
+   "src_size": [
+    640,
+    360
+   ],
+   "hand": [
+    17.4,
+    0.0,
+    453.2,
+    349.2
+   ],
+   "absent_want_of": "c1-settings"
+  }
+ ],
+ "gates": {
+  "mean_iou_min": 0.68
+ },
+ "local_reference": {
+  "presence_auc": 1.0
+ }
+}

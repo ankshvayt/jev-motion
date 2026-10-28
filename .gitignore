@@ -1,0 +1,21 @@
+# Secrets
+.env
+.env.*
+
+# Answer caches
+.jevm-cache/
+.cache/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Outputs: per-project work folders, eval reports, renders
+work/
+/eval/
+renders/
+*.mp4
+*.mov
+
+# OS
+.DS_Store

@@ -1,0 +1,91 @@
+{
+  "manifest_version": "1",
+  "kit": {
+    "id": "example",
+    "name": "Example Kit",
+    "fingerprint": "",
+    "built_at": ""
+  },
+  "sources": {},
+  "canvases": {
+    "short": {
+      "width": 1080,
+      "height": 1920,
+      "text_min_px": {
+        "ui": 40,
+        "mono": 32
+      },
+      "safe": {
+        "x_px": 64,
+        "top_px": 220,
+        "bottom_px": 360
+      },
+      "bands": {
+        "visual": [
+          220,
+          1080
+        ],
+        "word": [
+          1080,
+          1560
+        ]
+      },
+      "window_body": [
+        920,
+        760
+      ]
+    },
+    "long": {
+      "width": 1920,
+      "height": 1080,
+      "text_min_px": {
+        "ui": 30,
+        "mono": 26
+      },
+      "safe": {
+        "all_px": 90
+      },
+      "window_body": null
+    }
+  },
+  "themes": {
+    "ids": [
+      "night",
+      "paper"
+    ],
+    "policy": {
+      "short": "per_scene",
+      "long": "one_per_video"
+    }
+  },
+  "emphasis": {
+    "words": {
+      "token": "accent",
+      "value": "#38BDF8"
+    },
+    "non_word": null
+  },
+  "captions": {
+    "max_words_per_line": 4,
+    "max_lines": 2,
+    "source": "test fixture: four words per line, two lines"
+  },
+  "rules": {
+    "highlight": {
+      "per_caption_line": 1,
+      "per_frame": 2,
+      "allowed_on": [
+        "words"
+      ]
+    },
+    "punch_max": 1.05,
+    "focus_scale": [
+      1.25,
+      2.0
+    ]
+  },
+  "qa_context": {
+    "short": "A frame from a vertical 1080x1920 Short in a dark slate style: a talking-head speaker, app windows and screenshots inside light rounded frames, word-by-word captions in the lower third, and sky blue (#38BDF8) used only to highlight one or two words of text.",
+    "long": null
+  }
+}

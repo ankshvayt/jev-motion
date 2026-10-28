@@ -1,0 +1,61 @@
+{
+ "source": "Three frames of scripted answers (frames 4.5, 19.5, 30.0), classified at 0.70 / 0.40 / 0.50.",
+ "frames": [
+  {
+   "t": 4.5,
+   "p": {
+    "text_occluded": 0.32,
+    "cut_off_edge": 0.05,
+    "caption_on_face": 0.86,
+    "empty_region": 0.12,
+    "overlapping_panels": 0.02,
+    "overlay_on_controls": 0.04,
+    "hard_to_read": 0.15,
+    "face_visible": 0.98,
+    "caption_visible": 0.97
+   },
+   "flags": [
+    "caption_on_face"
+   ],
+   "checks": []
+  },
+  {
+   "t": 19.5,
+   "p": {
+    "text_occluded": 0.95,
+    "cut_off_edge": 0.25,
+    "caption_on_face": 0.03,
+    "empty_region": 0.46,
+    "overlapping_panels": 0.07,
+    "overlay_on_controls": 0.06,
+    "hard_to_read": 0.08,
+    "face_visible": 0.04,
+    "caption_visible": 0.96
+   },
+   "flags": [
+    "text_occluded"
+   ],
+   "checks": [
+    "empty_region"
+   ]
+  },
+  {
+   "t": 30.0,
+   "p": {
+    "text_occluded": 0.28,
+    "cut_off_edge": 0.08,
+    "caption_on_face": 0.03,
+    "empty_region": 0.55,
+    "overlapping_panels": 0.03,
+    "overlay_on_controls": 0.1,
+    "hard_to_read": 0.09,
+    "face_visible": 0.04,
+    "caption_visible": 0.95
+   },
+   "flags": [],
+   "checks": [
+    "empty_region"
+   ]
+  }
+ ]
+}

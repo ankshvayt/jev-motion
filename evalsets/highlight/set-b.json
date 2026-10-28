@@ -1,0 +1,208 @@
+{
+ "name": "set-b",
+ "note": "Synthetic caption groups with one author's hand highlights.",
+ "transcript": "Let me show you the export flow. Open the report you want to share, then click the share button in the top right corner. Pick PDF from the format menu. The whole export takes five seconds even for a fifty page report. You can also schedule it to send every Monday morning. Add the people who should get it, write a short note, and press save. Now the report arrives on its own and nobody has to ask for it. Try it on your next report and see how much time it frees up.",
+ "groups": [
+  {
+   "text": "Let me show you the export flow.",
+   "words": [
+    "Let",
+    "me",
+    "show",
+    "you",
+    "the",
+    "export",
+    "flow."
+   ]
+  },
+  {
+   "text": "Open the report you want to share,",
+   "words": [
+    "Open",
+    "the",
+    "report",
+    "you",
+    "want",
+    "to",
+    "share,"
+   ]
+  },
+  {
+   "text": "then click the share button",
+   "words": [
+    "then",
+    "click",
+    "the",
+    "share",
+    "button"
+   ]
+  },
+  {
+   "text": "in the top right corner.",
+   "words": [
+    "in",
+    "the",
+    "top",
+    "right",
+    "corner."
+   ]
+  },
+  {
+   "text": "Pick PDF from the format menu.",
+   "words": [
+    "Pick",
+    "PDF",
+    "from",
+    "the",
+    "format",
+    "menu."
+   ]
+  },
+  {
+   "text": "The whole export takes five seconds",
+   "words": [
+    "The",
+    "whole",
+    "export",
+    "takes",
+    "five",
+    "seconds"
+   ]
+  },
+  {
+   "text": "even for a fifty page report.",
+   "words": [
+    "even",
+    "for",
+    "a",
+    "fifty",
+    "page",
+    "report."
+   ]
+  },
+  {
+   "text": "You can also schedule it",
+   "words": [
+    "You",
+    "can",
+    "also",
+    "schedule",
+    "it"
+   ]
+  },
+  {
+   "text": "to send every Monday morning.",
+   "words": [
+    "to",
+    "send",
+    "every",
+    "Monday",
+    "morning."
+   ]
+  },
+  {
+   "text": "Add the people who should get it,",
+   "words": [
+    "Add",
+    "the",
+    "people",
+    "who",
+    "should",
+    "get",
+    "it,"
+   ]
+  },
+  {
+   "text": "write a short note,",
+   "words": [
+    "write",
+    "a",
+    "short",
+    "note,"
+   ]
+  },
+  {
+   "text": "and press save.",
+   "words": [
+    "and",
+    "press",
+    "save."
+   ]
+  },
+  {
+   "text": "Now the report arrives on its own",
+   "words": [
+    "Now",
+    "the",
+    "report",
+    "arrives",
+    "on",
+    "its",
+    "own"
+   ]
+  },
+  {
+   "text": "and nobody has to ask for it.",
+   "words": [
+    "and",
+    "nobody",
+    "has",
+    "to",
+    "ask",
+    "for",
+    "it."
+   ]
+  },
+  {
+   "text": "Try it on your next report",
+   "words": [
+    "Try",
+    "it",
+    "on",
+    "your",
+    "next",
+    "report"
+   ]
+  },
+  {
+   "text": "and see how much time it frees up.",
+   "words": [
+    "and",
+    "see",
+    "how",
+    "much",
+    "time",
+    "it",
+    "frees",
+    "up."
+   ]
+  }
+ ],
+ "hand": [
+  null,
+  null,
+  null,
+  null,
+  null,
+  [
+   4,
+   5
+  ],
+  null,
+  null,
+  null,
+  null,
+  null,
+  null,
+  [
+   4,
+   6
+  ],
+  null,
+  null,
+  null
+ ],
+ "gates": {
+  "hand_rank_max": 4
+ }
+}

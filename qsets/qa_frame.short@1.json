@@ -1,0 +1,91 @@
+{
+ "id": "qa_frame.short",
+ "version": 1,
+ "route": "jev",
+ "backend": "jev",
+ "models": {
+  "jev": "jev-1.14.0",
+  "local": "pplx-decider-flash-v1.2"
+ },
+ "thresholds": {
+  "jev": {
+   "flag": 0.7,
+   "check": 0.4,
+   "gate": 0.5
+  },
+  "local": null
+ },
+ "calibrated": {
+  "local": null
+ },
+ "order_check": false,
+ "batch": null,
+ "evidence": {
+  "label": "Default",
+  "ref": "docs/question-sets.md"
+ },
+ "notes": "QA-01 on a vertical short video, in any kit. One request per frame carries all 7 defect questions and both gates, on the whole frame, no mask. The kit's look reaches the questions only through `context`, the manifest's qa_context.short text. High p = problem. caption_on_face counts only when both gates reach thresholds.jev.gate. Triage, never a ship gate. Any wording change bumps the version.",
+ "questions": {
+  "text_occluded": {
+   "type": "noul",
+   "instructions": {
+    "question": "In `frame`, is any piece of text partly covered by a panel, card, window or other element placed on top of it, or showing faintly through a semi-transparent layer?",
+    "not_for": "Text that is fully visible even if small; text inside a screenshot that is simply cropped by its own window frame."
+   },
+   "criteria": {
+    "true": "Some letters are hidden or overlapped by another element, or ghost text shows through a panel.",
+    "false": "Every piece of text is fully visible and nothing sits on top of it."
+   }
+  },
+  "cut_off_edge": {
+   "type": "noul",
+   "instructions": "In `frame`, is any text, card or window cut off by the outer edge of the video frame?",
+   "criteria": {
+    "true": "Part of a word, card or window runs past the edge of the frame and is missing.",
+    "false": "Everything meant to be read is fully inside the frame; full-bleed footage or background reaching the edge is fine."
+   }
+  },
+  "caption_on_face": {
+   "type": "noul",
+   "instructions": "In `frame`, does caption text sit on top of the speaker's mouth or chin?",
+   "criteria": {
+    "true": "Caption words overlap the lower part of the speaker's face.",
+    "false": "No speaker is visible, or the caption sits clear of the mouth and chin."
+   }
+  },
+  "empty_region": {
+   "type": "noul",
+   "instructions": {
+    "question": "In `frame`, is a large block of the picture, roughly a third or more, empty background in a place where a window, card, footage or the speaker would be expected?",
+    "not_for": "A plain strip that only holds a caption line; a plain margin around a window or card."
+   },
+   "criteria": {
+    "true": "A big area that should hold a window, card, footage or the speaker shows only plain background, as if something failed to appear.",
+    "false": "Every window, card, footage and speaker area is filled; the plain space around or below a caption line is normal."
+   }
+  },
+  "overlapping_panels": {
+   "type": "noul",
+   "instructions": "In `frame`, are three or more cards, windows or panels stacked on top of each other, covering one another?"
+  },
+  "overlay_on_controls": {
+   "type": "noul",
+   "instructions": "In `frame`, does a small label, pill or badge sit on top of a window's title bar, tabs or buttons, covering them?"
+  },
+  "hard_to_read": {
+   "type": "noul",
+   "instructions": {
+    "question": "Would a viewer on a phone struggle to read the main on-screen text in `frame` at a glance, because it is tiny, low-contrast or on a busy background?",
+    "not_for": "Small text inside a screenshot that is not the point of the shot."
+   }
+  },
+  "face_visible": {
+   "type": "noul",
+   "instructions": "Is a person's face visible in `frame`?"
+  },
+  "caption_visible": {
+   "type": "noul",
+   "instructions": "Does `frame` show a line of caption text, i.e. spoken words written on screen?"
+  }
+ }
+}

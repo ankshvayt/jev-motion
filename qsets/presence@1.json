@@ -1,0 +1,39 @@
+{
+  "id": "presence",
+  "version": 1,
+  "route": "local",
+  "backend": "local",
+  "models": {
+    "jev": "jev-1.14.0",
+    "local": "pplx-decider-flash-v1.2"
+  },
+  "thresholds": {
+    "jev": {
+      "drop_below": 0.3,
+      "propose_at": 0.7
+    },
+    "local": {
+      "drop_below": 0.3,
+      "propose_at": 0.5
+    }
+  },
+  "calibrated": {
+    "local": {
+      "app_version": "0.1.0",
+      "model": "pplx-decider-flash-v1.2"
+    }
+  },
+  "order_check": false,
+  "batch": null,
+  "evidence": {
+    "label": "Default",
+    "ref": "docs/question-sets.md"
+  },
+  "notes": "The presence gate on its own, so Decider can drop an absent target before any Box request. The local thresholds are a starting point, not a calibration: check them with `jevm eval --backend local`.",
+  "questions": {
+    "vis": {
+      "type": "noul",
+      "instructions": "Is {want} visible in `image`?"
+    }
+  }
+}

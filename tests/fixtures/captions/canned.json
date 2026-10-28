@@ -1,0 +1,27 @@
+{
+  "note": "Canned Jev answers for the four caption groups of tests/fixtures/spec_min.json. `forward` and `reverse` list the probabilities of the pick options (span ids h0..hN and none) that are not zero; the tests pad the rest with 0.0.",
+  "cg0": {
+    "need": 0.80,
+    "need2": 0.95,
+    "forward": {"h11": 0.55, "h6": 0.25, "h8": 0.10, "none": 0.05, "h10": 0.03, "h0": 0.02},
+    "reverse": {"h11": 0.60, "h6": 0.20, "h8": 0.10, "none": 0.05, "h10": 0.03, "h0": 0.02}
+  },
+  "cg1": {
+    "need": 0.70,
+    "need2": 0.90,
+    "forward": {"h4": 0.60, "h3": 0.20, "h2": 0.10, "none": 0.05, "h5": 0.05},
+    "reverse": {"h4": 0.55, "h3": 0.25, "h2": 0.10, "none": 0.05, "h5": 0.05}
+  },
+  "cg2": {
+    "need": 0.60,
+    "need2": 0.40,
+    "forward": {"h13": 0.45, "h12": 0.35, "h11": 0.10, "none": 0.05, "h14": 0.05},
+    "reverse": {"h12": 0.50, "h13": 0.30, "h11": 0.10, "none": 0.05, "h14": 0.05}
+  },
+  "cg3": {
+    "need": 0.20,
+    "need2": 0.10,
+    "forward": {"h7": 0.50, "h6": 0.30, "h5": 0.10, "none": 0.05, "h8": 0.05},
+    "reverse": {"h7": 0.55, "h6": 0.25, "h5": 0.10, "none": 0.05, "h8": 0.05}
+  }
+}

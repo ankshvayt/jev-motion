@@ -1,0 +1,60 @@
+{
+ "labelled": [
+  {
+   "id": "l1",
+   "text": "Now it runs 100x faster.",
+   "measured": false
+  },
+  {
+   "id": "l2",
+   "text": "The release notes list 14 new features.",
+   "measured": true
+  }
+ ],
+ "controls": [
+  {
+   "text": "In the vendor's own benchmark report, the new model cut error rates from 12 percent to 7 percent.",
+   "measured": true
+  },
+  {
+   "text": "The launch announcement says nine more partners are building on it.",
+   "measured": true
+  },
+  {
+   "text": "The billing report shows the team sent 48,000 invoices in the first week.",
+   "measured": true
+  },
+  {
+   "text": "The changelog says the context window grew from 200 thousand to 1 million tokens.",
+   "measured": true
+  },
+  {
+   "text": "In my test of 50 invoices, it got 47 right.",
+   "measured": true
+  },
+  {
+   "text": "This makes you 100x more productive.",
+   "measured": false
+  },
+  {
+   "text": "It's ten times better than anything else out there.",
+   "measured": false
+  },
+  {
+   "text": "I have a million reasons to try this.",
+   "measured": false
+  },
+  {
+   "text": "This will 10x your business.",
+   "measured": false
+  },
+  {
+   "text": "It took me about a thousand tries to get this working.",
+   "measured": false
+  }
+ ],
+ "note": "Synthetic sentences: `labelled` are checked against the stat_check bands, `controls` at 0.5.",
+ "local_reference": {
+  "controls_correct": 10
+ }
+}

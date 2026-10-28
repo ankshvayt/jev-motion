@@ -1,0 +1,19 @@
+{
+  "id": "sample",
+  "version": 1,
+  "route": "jev",
+  "backend": "jev",
+  "models": {"jev": "jev-1.13.0", "local": "pplx-decider-flash-v1.2"},
+  "thresholds": {"jev": {}, "local": null},
+  "calibrated": {"local": null},
+  "order_check": false,
+  "batch": 4,
+  "evidence": {"label": "Default", "ref": "fixture", "source": "tests/fixtures/qsets/sample@1.json"},
+  "notes": "Fixture: first version of the sample set.",
+  "questions": {
+    "q_{i}": {
+      "type": "noul",
+      "instructions": "Is there one phrase in `groups[{i}].text` that carries the line?"
+    }
+  }
+}

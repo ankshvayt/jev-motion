@@ -1,0 +1,50 @@
+{
+ "source": "Scripted for the synthetic eval sets by evalsets/make_synthetic.py; not model output.",
+ "cases": {
+  "c1-settings": {
+   "box": {
+    "left": 0.594,
+    "top": 0.167,
+    "right": 0.969,
+    "bottom": 0.917,
+    "confidence": 0.7
+   },
+   "vis": 0.97,
+   "absent_vis": 0.02
+  },
+  "c2-chart": {
+   "box": {
+    "left": 0.062,
+    "top": 0.111,
+    "right": 0.562,
+    "bottom": 0.694,
+    "confidence": 0.7
+   },
+   "vis": 0.97,
+   "absent_vis": 0.02
+  },
+  "c3-table": {
+   "box": {
+    "left": 0.094,
+    "top": 0.417,
+    "right": 0.938,
+    "bottom": 0.944,
+    "confidence": 0.7
+   },
+   "vis": 0.97,
+   "absent_vis": 0.02
+  },
+  "c4-sidebar": {
+   "box": {
+    "left": 0.0,
+    "top": 0.0,
+    "right": 0.234,
+    "bottom": 1.0,
+    "confidence": 0.7
+   },
+   "vis": 0.97,
+   "absent_vis": 0.02
+  }
+ },
+ "missing": []
+}

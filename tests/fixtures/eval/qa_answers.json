@@ -1,0 +1,226 @@
+{
+ "source": "Scripted for the synthetic eval sets by evalsets/make_synthetic.py; not model output.",
+ "frames": {
+  "neg_t0.0.png": {
+   "text_occluded": 0.02,
+   "cut_off_edge": 0.03,
+   "caption_on_face": 0.04,
+   "empty_region": 0.05,
+   "overlapping_panels": 0.06,
+   "overlay_on_controls": 0.02,
+   "hard_to_read": 0.03,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "neg_t1.5.png": {
+   "text_occluded": 0.03,
+   "cut_off_edge": 0.04,
+   "caption_on_face": 0.05,
+   "empty_region": 0.06,
+   "overlapping_panels": 0.02,
+   "overlay_on_controls": 0.03,
+   "hard_to_read": 0.04,
+   "face_visible": 0.96,
+   "caption_visible": 0.97
+  },
+  "neg_t3.0.png": {
+   "text_occluded": 0.04,
+   "cut_off_edge": 0.05,
+   "caption_on_face": 0.06,
+   "empty_region": 0.02,
+   "overlapping_panels": 0.03,
+   "overlay_on_controls": 0.04,
+   "hard_to_read": 0.74,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "neg_t4.5.png": {
+   "text_occluded": 0.05,
+   "cut_off_edge": 0.06,
+   "caption_on_face": 0.02,
+   "empty_region": 0.03,
+   "overlapping_panels": 0.04,
+   "overlay_on_controls": 0.05,
+   "hard_to_read": 0.06,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "neg_t6.0.png": {
+   "text_occluded": 0.06,
+   "cut_off_edge": 0.02,
+   "caption_on_face": 0.03,
+   "empty_region": 0.04,
+   "overlapping_panels": 0.05,
+   "overlay_on_controls": 0.06,
+   "hard_to_read": 0.02,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "neg_t7.5.png": {
+   "text_occluded": 0.02,
+   "cut_off_edge": 0.03,
+   "caption_on_face": 0.04,
+   "empty_region": 0.72,
+   "overlapping_panels": 0.06,
+   "overlay_on_controls": 0.02,
+   "hard_to_read": 0.03,
+   "face_visible": 0.96,
+   "caption_visible": 0.97
+  },
+  "neg_t9.0.png": {
+   "text_occluded": 0.45,
+   "cut_off_edge": 0.04,
+   "caption_on_face": 0.05,
+   "empty_region": 0.06,
+   "overlapping_panels": 0.02,
+   "overlay_on_controls": 0.03,
+   "hard_to_read": 0.04,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "neg_t10.5.png": {
+   "text_occluded": 0.04,
+   "cut_off_edge": 0.05,
+   "caption_on_face": 0.06,
+   "empty_region": 0.02,
+   "overlapping_panels": 0.03,
+   "overlay_on_controls": 0.04,
+   "hard_to_read": 0.05,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "text_occluded_01_t1.5.png": {
+   "text_occluded": 0.88,
+   "cut_off_edge": 0.04,
+   "caption_on_face": 0.05,
+   "empty_region": 0.06,
+   "overlapping_panels": 0.02,
+   "overlay_on_controls": 0.03,
+   "hard_to_read": 0.04,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "text_occluded_02_t3.0.png": {
+   "text_occluded": 0.93,
+   "cut_off_edge": 0.05,
+   "caption_on_face": 0.06,
+   "empty_region": 0.02,
+   "overlapping_panels": 0.03,
+   "overlay_on_controls": 0.04,
+   "hard_to_read": 0.05,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "cut_off_edge_01_t4.5.png": {
+   "text_occluded": 0.03,
+   "cut_off_edge": 0.35,
+   "caption_on_face": 0.05,
+   "empty_region": 0.06,
+   "overlapping_panels": 0.02,
+   "overlay_on_controls": 0.03,
+   "hard_to_read": 0.04,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "cut_off_edge_02_t6.0.png": {
+   "text_occluded": 0.04,
+   "cut_off_edge": 0.93,
+   "caption_on_face": 0.06,
+   "empty_region": 0.02,
+   "overlapping_panels": 0.03,
+   "overlay_on_controls": 0.04,
+   "hard_to_read": 0.05,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "caption_on_face_01_t7.5.png": {
+   "text_occluded": 0.03,
+   "cut_off_edge": 0.04,
+   "caption_on_face": 0.88,
+   "empty_region": 0.06,
+   "overlapping_panels": 0.02,
+   "overlay_on_controls": 0.03,
+   "hard_to_read": 0.04,
+   "face_visible": 0.96,
+   "caption_visible": 0.97
+  },
+  "caption_on_face_02_t9.0.png": {
+   "text_occluded": 0.04,
+   "cut_off_edge": 0.05,
+   "caption_on_face": 0.93,
+   "empty_region": 0.02,
+   "overlapping_panels": 0.03,
+   "overlay_on_controls": 0.04,
+   "hard_to_read": 0.05,
+   "face_visible": 0.96,
+   "caption_visible": 0.97
+  },
+  "empty_region_01_t10.5.png": {
+   "text_occluded": 0.03,
+   "cut_off_edge": 0.04,
+   "caption_on_face": 0.05,
+   "empty_region": 0.88,
+   "overlapping_panels": 0.02,
+   "overlay_on_controls": 0.03,
+   "hard_to_read": 0.04,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "empty_region_02_t12.0.png": {
+   "text_occluded": 0.04,
+   "cut_off_edge": 0.05,
+   "caption_on_face": 0.06,
+   "empty_region": 0.93,
+   "overlapping_panels": 0.03,
+   "overlay_on_controls": 0.04,
+   "hard_to_read": 0.05,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "overlapping_panels_01_t13.5.png": {
+   "text_occluded": 0.03,
+   "cut_off_edge": 0.04,
+   "caption_on_face": 0.05,
+   "empty_region": 0.06,
+   "overlapping_panels": 0.88,
+   "overlay_on_controls": 0.03,
+   "hard_to_read": 0.04,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "overlapping_panels_02_t15.0.png": {
+   "text_occluded": 0.04,
+   "cut_off_edge": 0.05,
+   "caption_on_face": 0.06,
+   "empty_region": 0.02,
+   "overlapping_panels": 0.55,
+   "overlay_on_controls": 0.04,
+   "hard_to_read": 0.05,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "overlay_on_controls_01_t16.5.png": {
+   "text_occluded": 0.03,
+   "cut_off_edge": 0.04,
+   "caption_on_face": 0.05,
+   "empty_region": 0.06,
+   "overlapping_panels": 0.02,
+   "overlay_on_controls": 0.88,
+   "hard_to_read": 0.04,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  },
+  "overlay_on_controls_02_t18.0.png": {
+   "text_occluded": 0.04,
+   "cut_off_edge": 0.05,
+   "caption_on_face": 0.06,
+   "empty_region": 0.02,
+   "overlapping_panels": 0.03,
+   "overlay_on_controls": 0.93,
+   "hard_to_read": 0.05,
+   "face_visible": 0.04,
+   "caption_visible": 0.97
+  }
+ },
+ "missing": []
+}

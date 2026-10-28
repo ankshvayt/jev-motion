@@ -1,0 +1,19 @@
+{
+  "assets": [
+    {
+      "id": "a1",
+      "kind": "screenshot",
+      "uri": "assets/invoice-table.png",
+      "description": "Screenshot of the invoice table",
+      "sensitivity": "public",
+      "layer": "third_party_ui"
+    },
+    {
+      "id": "a2",
+      "kind": "source_text",
+      "uri": "sources/test-notes.md",
+      "description": "Notes from the invoice test",
+      "sensitivity": "public"
+    }
+  ]
+}

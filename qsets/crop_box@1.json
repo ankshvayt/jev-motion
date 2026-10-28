@@ -1,0 +1,37 @@
+{
+  "id": "crop_box",
+  "version": 1,
+  "route": "jev",
+  "backend": "jev",
+  "models": {
+    "jev": "jev-1.14.0",
+    "local": null
+  },
+  "thresholds": {
+    "jev": {
+      "drop_below": 0.3,
+      "propose_at": 0.7
+    },
+    "local": null
+  },
+  "calibrated": {
+    "local": null
+  },
+  "order_check": false,
+  "batch": null,
+  "evidence": {
+    "label": "Default",
+    "ref": "docs/question-sets.md"
+  },
+  "notes": "Box and its bundled presence Noul in one request per frame. Box never runs on the local backend. The want names the whole region the shot needs.",
+  "questions": {
+    "box": {
+      "type": "box",
+      "instructions": "Draw a box around {want} in `image`."
+    },
+    "vis": {
+      "type": "noul",
+      "instructions": "Is {want} visible in `image`?"
+    }
+  }
+}

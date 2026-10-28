@@ -1,0 +1,3 @@
+{"formats_version": "1", "formats": {
+ "short": {"name": "Vertical short video (9:16)", "family": "short", "modules": ["universal"], "highlight_density": 0.25, "qa_sets": ["qa_frame.short"]},
+ "long": {"name": "Horizontal long-form video (16:9)", "family": "long", "modules": ["universal"], "highlight_density": 0.10, "qa_sets": []}}}

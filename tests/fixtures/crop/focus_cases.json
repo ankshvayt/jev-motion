@@ -1,0 +1,11 @@
+{
+  "note": "Synthetic focus crops: source size, the focus helper arguments (scale, origin x, origin y) and the visible rectangle in source px they give, rounded. body is the window body the focus scales within.",
+  "body": [920, 760],
+  "cases": [
+    {"id": "c1", "src": [1920, 1080], "focus": [1.8, 470, 700], "hand": [603, 442, 1329, 1042]},
+    {"id": "c2", "src": [1920, 1080], "focus": [1.45, 460, 150], "hand": [509, 66, 1411, 811]},
+    {"id": "c3", "src": [512, 512], "focus": [1.7, 430, 600], "hand": [99, 137, 400, 386]}
+  ],
+  "expand_case": {"box": [100, 100, 300, 200], "src": [1920, 1080]},
+  "tall_src": [1080, 1920]
+}

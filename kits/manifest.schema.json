@@ -1,0 +1,107 @@
+{
+  "$comment": "Kit manifest. A kit is a folder you own; jevm reads <kit-dir>/manifest.json. Checked by `jevm kit check` with the same small validator as spec/schema.json (type, required, properties, additionalProperties, items, enum, minItems, maxItems, minimum, maximum, pattern). Objects stay open unless noted so a kit may carry extra keys jevm ignores.",
+  "type": "object",
+  "required": ["manifest_version", "kit", "sources", "canvases", "themes", "emphasis", "captions", "rules", "qa_context"],
+  "properties": {
+    "manifest_version": {"type": "string"},
+    "kit": {
+      "type": "object",
+      "required": ["id", "name", "fingerprint", "built_at"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9._-]*$"},
+        "name": {"type": "string"},
+        "fingerprint": {"type": "string", "pattern": "^([0-9a-f]{64})?$"},
+        "built_at": {"type": "string"}
+      }
+    },
+    "sources": {
+      "type": "object",
+      "additionalProperties": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+    },
+    "canvases": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "short": {
+          "type": "object",
+          "required": ["width", "height", "text_min_px", "safe", "window_body"],
+          "properties": {
+            "width": {"type": "integer", "minimum": 1},
+            "height": {"type": "integer", "minimum": 1},
+            "text_min_px": {
+              "type": "object",
+              "required": ["ui", "mono"],
+              "properties": {"ui": {"type": "integer", "minimum": 1}, "mono": {"type": "integer", "minimum": 1}}
+            },
+            "safe": {"type": "object"},
+            "bands": {"type": "object"},
+            "window_body": {"type": ["array", "null"], "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 1}}
+          }
+        },
+        "long": {
+          "type": "object",
+          "required": ["width", "height", "text_min_px", "safe", "window_body"],
+          "properties": {
+            "width": {"type": "integer", "minimum": 1},
+            "height": {"type": "integer", "minimum": 1},
+            "text_min_px": {
+              "type": "object",
+              "required": ["ui", "mono"],
+              "properties": {"ui": {"type": "integer", "minimum": 1}, "mono": {"type": "integer", "minimum": 1}}
+            },
+            "safe": {"type": "object"},
+            "bands": {"type": "object"},
+            "window_body": {"type": ["array", "null"], "minItems": 2, "maxItems": 2, "items": {"type": "integer", "minimum": 1}}
+          }
+        }
+      }
+    },
+    "themes": {
+      "type": "object",
+      "required": ["ids", "policy"],
+      "properties": {
+        "ids": {"type": "array", "minItems": 1, "items": {"type": "string"}},
+        "policy": {"type": "object", "additionalProperties": {"type": "string", "enum": ["per_scene", "one_per_video"]}}
+      }
+    },
+    "emphasis": {
+      "type": "object",
+      "required": ["words", "non_word"],
+      "properties": {
+        "words": {
+          "type": "object",
+          "required": ["token", "value"],
+          "properties": {"token": {"type": "string"}, "value": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"}}
+        },
+        "non_word": {"type": ["string", "null"]}
+      }
+    },
+    "captions": {
+      "type": "object",
+      "required": ["max_words_per_line", "max_lines"],
+      "properties": {
+        "max_words_per_line": {"type": "integer", "minimum": 1},
+        "max_lines": {"type": "integer", "minimum": 1},
+        "source": {"type": "string"}
+      }
+    },
+    "rules": {
+      "type": "object",
+      "required": ["highlight", "focus_scale"],
+      "properties": {
+        "highlight": {
+          "type": "object",
+          "required": ["per_caption_line", "per_frame", "allowed_on"],
+          "properties": {
+            "per_caption_line": {"type": "integer", "minimum": 0},
+            "per_frame": {"type": "integer", "minimum": 0},
+            "allowed_on": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "punch_max": {"type": "number", "minimum": 1},
+        "focus_scale": {"type": "array", "minItems": 2, "maxItems": 2, "items": {"type": "number", "minimum": 1}}
+      }
+    },
+    "qa_context": {"type": "object", "additionalProperties": {"type": ["string", "null"]}}
+  }
+}

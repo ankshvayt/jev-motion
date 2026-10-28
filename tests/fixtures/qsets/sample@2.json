@@ -1,0 +1,19 @@
+{
+  "id": "sample",
+  "version": 2,
+  "route": "jev",
+  "backend": "jev",
+  "models": {"jev": "jev-1.13.0", "local": "pplx-decider-flash-v1.2"},
+  "thresholds": {"jev": {"need": 0.5}, "local": null},
+  "calibrated": {"local": null},
+  "order_check": true,
+  "batch": 4,
+  "evidence": {"label": "Default", "ref": "fixture", "source": "tests/fixtures/qsets/sample@2.json"},
+  "notes": "Fixture: second version of the sample set.",
+  "questions": {
+    "q_{i}": {
+      "type": "noul",
+      "instructions": "Is there exactly one phrase in `groups[{i}].text` that is the point of the line? Literal braces such as {not_a_sub} and {\"k\": 1} stay as written."
+    }
+  }
+}

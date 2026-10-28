@@ -1,0 +1,94 @@
+{
+  "manifest_version": "1",
+  "kit": {
+    "id": "example",
+    "name": "Example Kit",
+    "fingerprint": "fea4141f075d35fede8284675255257990fe9087ee35f4da87895f67a1a3133d",
+    "built_at": "2026-10-28T12:29:33Z"
+  },
+  "sources": {
+    "tokens.css": "7fd310fabfbb2c3e8b61c43a70dced15e1d82e937a26f6e0ee5a273c9da75a02",
+    "use_when.json": "24922743c480c098eaeda207ca9608b38f302819544a81a0e2e5d5e9c173741b"
+  },
+  "canvases": {
+    "short": {
+      "width": 1080,
+      "height": 1920,
+      "text_min_px": {
+        "ui": 40,
+        "mono": 32
+      },
+      "safe": {
+        "x_px": 64,
+        "top_px": 220,
+        "bottom_px": 360
+      },
+      "bands": {
+        "visual": [
+          220,
+          1080
+        ],
+        "word": [
+          1080,
+          1560
+        ]
+      },
+      "window_body": [
+        920,
+        760
+      ]
+    },
+    "long": {
+      "width": 1920,
+      "height": 1080,
+      "text_min_px": {
+        "ui": 30,
+        "mono": 26
+      },
+      "safe": {
+        "all_px": 90
+      },
+      "window_body": null
+    }
+  },
+  "themes": {
+    "ids": [
+      "night",
+      "paper"
+    ],
+    "policy": {
+      "short": "per_scene",
+      "long": "one_per_video"
+    }
+  },
+  "emphasis": {
+    "words": {
+      "token": "accent",
+      "value": "#38BDF8"
+    },
+    "non_word": null
+  },
+  "captions": {
+    "max_words_per_line": 4,
+    "max_lines": 2,
+    "source": "tokens.css: --caption-words-per-line, --caption-lines"
+  },
+  "rules": {
+    "highlight": {
+      "per_caption_line": 1,
+      "per_frame": 2,
+      "allowed_on": [
+        "words"
+      ]
+    },
+    "punch_max": 1.05,
+    "focus_scale": [
+      1.25,
+      2.0
+    ]
+  },
+  "qa_context": {
+    "short": "A frame from a vertical 1080x1920 Short in a dark slate style: a talking-head speaker, app windows and screenshots inside light rounded frames, word-by-word captions in the lower third, and sky blue (#38BDF8) used only to highlight one or two words of text.",
+    "long": null
+  }
+}

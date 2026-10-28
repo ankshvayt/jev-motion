@@ -1,0 +1,24 @@
+/* Example Kit: neutral design tokens for trying jevm. Not a real brand.
+   `adapter.py` reads the :root custom properties below; `use_when.json` holds what a stylesheet does not say. */
+:root {
+  --safe-x: 64px;
+  --safe-top: 220px;
+  --safe-bottom: 360px;
+  --safe-long: 90px;
+  --band-word-top: 1080px;
+  --text-min-ui: 40px;
+  --text-min-mono: 32px;
+  --text-min-ui-long: 30px;
+  --text-min-mono-long: 26px;
+  --accent: #38BDF8;
+  --caption-words-per-line: 4;
+  --caption-lines: 2;
+  --highlight-per-line: 1;
+  --highlight-per-frame: 2;
+  --punch-max: 1.05;
+  --focus-scale-min: 1.25;
+  --focus-scale-max: 2;
+}
+
+[data-theme="night"] { --stage: #1E2430; --ink: #F4F6FA; }
+[data-theme="paper"] { --stage: #F7F5F0; --ink: #1E2430; }

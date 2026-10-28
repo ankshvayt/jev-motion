@@ -1,0 +1,10 @@
+{
+  "note": "Hand-kept facts the stylesheet does not state. adapter.py reads them; jevm hashes this file as a kit source.",
+  "canvases": {"short": [1080, 1920], "long": [1920, 1080]},
+  "window_body": {"short": [920, 760], "long": null},
+  "themes_policy": {"short": "per_scene", "long": "one_per_video"},
+  "qa_context": {
+    "short": "A frame from a vertical 1080x1920 Short in a dark slate style: a talking-head speaker, app windows and screenshots inside light rounded frames, word-by-word captions in the lower third, and sky blue (#38BDF8) used only to highlight one or two words of text.",
+    "long": null
+  }
+}

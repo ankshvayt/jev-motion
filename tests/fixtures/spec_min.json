@@ -1,0 +1,335 @@
+{
+  "spec_version": "1.0",
+  "project": {
+    "id": "jevm-fixture",
+    "title": "Sort every invoice in one click",
+    "root": "jevm-fixture"
+  },
+  "format": {
+    "id": "short",
+    "family": "short",
+    "origin": "declared",
+    "declared_by": "human",
+    "modules": [
+      "universal"
+    ]
+  },
+  "canvas": {
+    "aspect": "9:16",
+    "width": 1080,
+    "height": 1920,
+    "fps": 30,
+    "duration_s": 5.4
+  },
+  "kit": {
+    "id": "example",
+    "manifest": "tests/fixtures/manifest_min.json",
+    "manifest_sha256": "115ea9b4986873cddd4f075644c3ed23498b418f3be6495b0a0d9f2a4f733cc0",
+    "canvas": "short",
+    "theme_policy": "per_scene",
+    "theme": "night",
+    "overrides": {}
+  },
+  "transcript": {
+    "origin": "asr",
+    "source": "work/words.json",
+    "text": "Sort every invoice into folders in one click. In my test of 50 invoices, it got 47 right.",
+    "words": [
+      {
+        "id": "w0",
+        "text": "Sort",
+        "start": 0.0,
+        "end": 0.3,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w1",
+        "text": "every",
+        "start": 0.3,
+        "end": 0.6,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w2",
+        "text": "invoice",
+        "start": 0.6,
+        "end": 0.9,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w3",
+        "text": "into",
+        "start": 0.9,
+        "end": 1.2,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w4",
+        "text": "folders",
+        "start": 1.2,
+        "end": 1.5,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w5",
+        "text": "in",
+        "start": 1.5,
+        "end": 1.8,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w6",
+        "text": "one",
+        "start": 1.8,
+        "end": 2.1,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w7",
+        "text": "click.",
+        "start": 2.1,
+        "end": 2.4,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w8",
+        "text": "In",
+        "start": 2.4,
+        "end": 2.7,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w9",
+        "text": "my",
+        "start": 2.7,
+        "end": 3.0,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w10",
+        "text": "test",
+        "start": 3.0,
+        "end": 3.3,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w11",
+        "text": "of",
+        "start": 3.3,
+        "end": 3.6,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w12",
+        "text": "50",
+        "start": 3.6,
+        "end": 3.9,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w13",
+        "text": "invoices,",
+        "start": 3.9,
+        "end": 4.2,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w14",
+        "text": "it",
+        "start": 4.2,
+        "end": 4.5,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w15",
+        "text": "got",
+        "start": 4.5,
+        "end": 4.8,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w16",
+        "text": "47",
+        "start": 4.8,
+        "end": 5.1,
+        "speaker": "s0",
+        "conf": 0.99
+      },
+      {
+        "id": "w17",
+        "text": "right.",
+        "start": 5.1,
+        "end": 5.4,
+        "speaker": "s0",
+        "conf": 0.99
+      }
+    ]
+  },
+  "units": {
+    "sentences": [
+      {
+        "id": "sn0",
+        "words": [
+          "w0",
+          "w7"
+        ],
+        "start": 0.0,
+        "end": 2.4
+      },
+      {
+        "id": "sn1",
+        "words": [
+          "w8",
+          "w17"
+        ],
+        "start": 2.4,
+        "end": 5.4
+      }
+    ],
+    "caption_groups": [
+      {
+        "id": "cg0",
+        "words": [
+          "w0",
+          "w4"
+        ],
+        "start": 0.0,
+        "end": 1.5,
+        "lines": 2,
+        "sentence": "sn0"
+      },
+      {
+        "id": "cg1",
+        "words": [
+          "w5",
+          "w7"
+        ],
+        "start": 1.5,
+        "end": 2.4,
+        "lines": 1,
+        "sentence": "sn0"
+      },
+      {
+        "id": "cg2",
+        "words": [
+          "w8",
+          "w13"
+        ],
+        "start": 2.4,
+        "end": 4.2,
+        "lines": 2,
+        "sentence": "sn1"
+      },
+      {
+        "id": "cg3",
+        "words": [
+          "w14",
+          "w17"
+        ],
+        "start": 4.2,
+        "end": 5.4,
+        "lines": 1,
+        "sentence": "sn1"
+      }
+    ]
+  },
+  "assets": [
+    {
+      "id": "a1",
+      "kind": "screen_recording",
+      "uri": "raw/screen.mov",
+      "duration_s": 30.0,
+      "dims": [
+        1920,
+        1080
+      ],
+      "description": "Screen recording of sorting invoices into folders",
+      "sensitivity": "private",
+      "layer": "third_party_ui"
+    },
+    {
+      "id": "a2",
+      "kind": "image",
+      "uri": "assets/shot.png",
+      "description": "Screenshot of the folder view",
+      "sensitivity": "public",
+      "layer": "third_party_ui"
+    },
+    {
+      "id": "a3",
+      "kind": "source_text",
+      "uri": "sources/report.md",
+      "description": "Report with the invoice test results",
+      "sensitivity": "public"
+    }
+  ],
+  "constraints": {
+    "safe": {
+      "x_px": 64,
+      "top_px": 220,
+      "bottom_px": 360,
+      "from": "kit"
+    },
+    "text_min_px": {
+      "ui": 40,
+      "mono": 32,
+      "from": "kit"
+    },
+    "captions": {
+      "max_words_per_line": 4,
+      "max_lines": 2,
+      "from": "kit"
+    },
+    "highlight": {
+      "per_caption_line": 1,
+      "per_frame": 2,
+      "allowed_on": [
+        "words"
+      ],
+      "density": 0.25,
+      "from": "kit+format"
+    },
+    "emphasis_non_word": {
+      "token": null,
+      "from": "kit"
+    }
+  },
+  "creator_declared": {
+    "highlight_density": null
+  },
+  "decide": {
+    "policy": "default@1",
+    "budget_usd": 0.1,
+    "backends": {
+      "jev": {
+        "models": {
+          "text": "jev-1.13.0",
+          "image": "jev-1.14.0"
+        },
+        "concurrency": 6
+      },
+      "local": {
+        "name": "Decider (Perplexity, local)",
+        "url": "http://127.0.0.1:8080",
+        "model": "pplx-decider-flash-v1.2",
+        "concurrency": 1
+      }
+    }
+  }
+}

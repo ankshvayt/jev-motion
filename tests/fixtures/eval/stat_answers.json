@@ -1,0 +1,54 @@
+{
+ "source": "Scripted for the synthetic eval sets by evalsets/make_synthetic.py; not model output.",
+ "sentences": {
+  "Now it runs 100x faster.": {
+   "has_number": 0.95,
+   "stat_is_measured": 0.08
+  },
+  "The release notes list 14 new features.": {
+   "has_number": 0.95,
+   "stat_is_measured": 0.86
+  },
+  "In the vendor's own benchmark report, the new model cut error rates from 12 percent to 7 percent.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.78
+  },
+  "The launch announcement says nine more partners are building on it.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.81
+  },
+  "The billing report shows the team sent 48,000 invoices in the first week.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.84
+  },
+  "The changelog says the context window grew from 200 thousand to 1 million tokens.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.87
+  },
+  "In my test of 50 invoices, it got 47 right.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.78
+  },
+  "This makes you 100x more productive.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.1
+  },
+  "It's ten times better than anything else out there.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.14
+  },
+  "I have a million reasons to try this.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.18
+  },
+  "This will 10x your business.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.06
+  },
+  "It took me about a thousand tries to get this working.": {
+   "has_number": 0.97,
+   "stat_is_measured": 0.1
+  }
+ },
+ "missing": []
+}

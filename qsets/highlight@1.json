@@ -1,0 +1,48 @@
+{
+  "id": "highlight",
+  "version": 1,
+  "route": "jev",
+  "backend": "jev",
+  "models": {
+    "jev": "jev-1.13.0",
+    "local": "pplx-decider-flash-v1.2"
+  },
+  "thresholds": {
+    "jev": {},
+    "local": null
+  },
+  "calibrated": {
+    "local": null
+  },
+  "order_check": true,
+  "batch": 4,
+  "evidence": {
+    "label": "Default",
+    "ref": "docs/question-sets.md"
+  },
+  "notes": "Dict key order is part of the wording. `need` stays in every request, unused by the policy, because answers move when other questions in the same request change. Every question is asked per group `i` of the batch; `pick_{i}` criteria are added by code: the group's 1-3 word spans h0..hN, then `none`.",
+  "questions": {
+    "need_{i}": {
+      "type": "noul",
+      "instructions": "Does `groups[{i}].text` contain one word or short phrase that carries the key point of the line, such as a contrast, a surprising number, a product being introduced, or a verdict, that the viewer must not miss?"
+    },
+    "need2_{i}": {
+      "type": "noul",
+      "criteria": {
+        "true": "One phrase clearly carries the line (a contrast, a count, a product being introduced, a verdict or a surprising claim) and the rest of the line is supporting words.",
+        "false": "The line is setup, narration or a routine step and no phrase matters more than the rest. Most lines in a video are like this."
+      },
+      "instructions": {
+        "question": "Is there exactly one word or short phrase in `groups[{i}].text` that is the point of the line, so that highlighting it would help a viewer who only skims the captions?",
+        "not_for": "Lines that are setup, connective words, routine step-by-step narration, or where every part matters equally."
+      }
+    },
+    "pick_{i}": {
+      "type": "choice",
+      "instructions": "Pick the single word or short phrase in `groups[{i}].text` that should be highlighted: the words that carry the point of the line. Prefer the shortest span that still carries it. Choose none if nothing stands out.",
+      "criteria": {
+        "none": "No single word or phrase stands out; nothing in this line should be highlighted."
+      }
+    }
+  }
+}
